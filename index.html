@@ -83,7 +83,7 @@
       <a href="#qa">의혹 Q&amp;A</a>
       <a href="PUBLIC_REPORT.md">전체 리포트 ↗</a>
       <a href="README.md">사용법 ↗</a>
-      <a href="data/nec_2026_local.csv.gz">데이터 ↓</a>
+      <a href="data/SOURCE.md">데이터·출처 ↗</a>
     </nav>
   </div>
 </header>
@@ -91,14 +91,15 @@
 <section id="verdict">
   <div class="wrap">
     <h2>Bottom line</h2>
-    <h3>"우연으로 설명 안 되는 조작의 흔적"은 나오지 않았습니다.</h3>
-    <p>일부 경고(FLAG)가 떴지만, 모두 <b>우연히 그 정도는 나오는 범위</b> 안이었습니다.
-       이 페이지는 부정을 "증명"하거나 "완전무결"을 보증하지 않습니다 —
-       <b>의혹을 직접 확인할 수 있게</b> 데이터·코드·결과를 전부 공개합니다.</p>
+    <h3>이건 "검증 도구"이지 "평결"이 아닙니다.</h3>
+    <p>약 1,245개 선거단위 중 <b>대부분 PASS</b>(우연 모델로 설명되는 범위), <b>3개 FLAG</b>(우연 모델의
+       기대치를 통계적으로 초과 → 더 볼 지점)입니다. <b>FLAG도 PASS도 그 자체로 부정·결백의 증명이
+       아닙니다.</b> 이 페이지는 "조작이 있다/없다"가 아니라 <b>"어디가 기대치를 넘었는지"의 사실</b>을
+       보여줍니다 — 해석은 읽는 사람의 몫이고, 데이터·코드·임계값을 전부 공개하니 직접 반박·재현하세요.</p>
     <div class="verdict">
-      <div class="stat"><div class="n pass">~1,245</div><div class="l">검사한 선거단위 (T1)</div></div>
-      <div class="stat"><div class="n flag">3</div><div class="l">FLAG — 모두 우연 쌍 1~3개</div></div>
-      <div class="stat"><div class="n pass">0</div><div class="l">'복제(전 항목 동일)' 사례</div></div>
+      <div class="stat"><div class="n">~1,245</div><div class="l">검사한 선거단위 (T1)</div></div>
+      <div class="stat"><div class="n flag">3</div><div class="l">FLAG — 기대치 초과(추가 확인 대상)</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">'복제(전 항목 동일)' 사례</div></div>
     </div>
 
     <h2 style="margin-top:38px">선거별 결과</h2>
@@ -198,24 +199,21 @@
 <section id="flags">
   <div class="wrap">
     <h2>About those flags</h2>
-    <h3>FLAG 3건, 왜 "우연"인가</h3>
+    <h3>FLAG 3건 — 사실과 열린 해석</h3>
     <table>
-      <thead><tr><th>곳</th><th class="center">겹친 쌍</th><th class="center">기대치</th><th>해석</th></tr></thead>
+      <thead><tr><th>선거</th><th class="center">동일(상위2) 쌍</th><th class="center">기대치</th><th class="center">σ</th></tr></thead>
       <tbody>
-        <tr><td>인천 시도지사</td><td class="center">1</td><td class="center">0.02 (7σ)</td>
-          <td>158개 동네를 짝지으면 약 1.2만 쌍 — 1번쯤 겹침</td></tr>
-        <tr><td>전남 시도지사</td><td class="center">3</td><td class="center">0.4 (3.9σ)</td>
-          <td>297개 동네(약 4.4만 쌍)에서 3번</td></tr>
-        <tr><td>충북 광역비례</td><td class="center">1</td><td class="center">0.09 (3σ)</td>
-          <td>153개 동네에서 1번</td></tr>
+        <tr><td>전남 시도지사</td><td class="center">3</td><td class="center">0.4</td><td class="center">+3.9</td></tr>
+        <tr><td>인천 시도지사</td><td class="center">1</td><td class="center">0.02</td><td class="center">+7.0</td></tr>
+        <tr><td>충북 광역비례</td><td class="center">1</td><td class="center">0.09</td><td class="center">+3.0</td></tr>
       </tbody>
     </table>
     <div class="callout" style="margin-top:18px">
-      <b>핵심 — 여러 번 보면 드문 일도 나온다(다중비교).</b> 약 1,245개 선거를 동시에 검사하면,
-      "1000번에 1번" 같은 드문 일도 평균 한두 번은 그냥 나옵니다. 복권 1,245장 중 한 장 당첨이
-      이상하지 않은 것과 같습니다. 게다가 이 3건은 모두 겹친 쌍이 1~3개뿐이고
-      <b>"한 정당으로 쏠렸는가" 검사에서도 정상</b>이었습니다. 조직적 조작이라면 전국적·한 방향으로
-      나타나야 하는데 그런 패턴은 없었습니다.
+      <b>사실:</b> 이 세 선거에서 동일 득표 쌍 수가 단순 우연 모델의 기대치를 통계적으로 유의하게
+      초과했습니다(그래서 PASS가 아니라 FLAG). <b>열린 해석:</b> 이것이 다중비교에 따른 우연인지
+      (약 1,245개를 동시에 보면 +3σ가 몇 건 나오는 게 정상) 다른 원인인지는
+      <b>이 검정만으로 단정할 수 없습니다.</b> FLAG는 "여기를 더 보라"는 표시이지 결론이 아닙니다.
+      정상(PASS)을 "은폐"로, 이상치(FLAG)를 "스모킹건"으로 읽는 것 둘 다 데이터가 뒷받침하지 않는 비약입니다.
     </div>
   </div>
 </section>
@@ -242,19 +240,25 @@
     <h2>Direct answers</h2>
     <h3>떠돌던 사례들에 대한 답변</h3>
     <div class="qa">
-      <p class="q">Q. "송도1·2동, 박찬대 3030 = 유정복 1440 동일!"</p>
-      <p class="small">박찬대(국회의원)와 유정복(시장/도지사)은 <b>서로 다른 선거</b>입니다. 무관한 두 숫자가
-        한 동네에서 우연히 겹친 것으로, 통계적으로 놀랄 일이 아닙니다(생일 역설). 같은 선거 안에서 본
-        인천 시도지사 T1에서도 겹친 쌍은 1개뿐이었습니다.</p>
+      <p class="q">Q. "화순 이양면·강진 병영면, 민형배 둘 다 444!"</p>
+      <p class="small"><b>사실입니다.</b> 데이터로 확인됩니다 — 민형배 후보는 <b>2026 전남도지사</b> 후보로,
+        전남 전역이 한 선거구라 두 곳 모두에 등장합니다. 관내사전투표 민형배 득표가
+        <b>화순 이양면 444(투표수 578), 강진 병영면 444(투표수 654)</b> 로 동일하며, 전남에서 민형배
+        관내사전이 444인 읍면동은 이 두 곳뿐입니다.</p>
+      <p class="small">통계적으로: 이 <b>전남 시도지사 race는 T1에서 FLAG</b>됐습니다(상위2 동일 쌍 3개,
+        기대 0.4, <b>+3.9σ</b>). 단순 우연 모델의 기대치를 유의하게 초과한다는 뜻입니다. <b>다만 이것이
+        우연(다중비교)인지 다른 원인인지는 이 검정만으로 단정할 수 없습니다.</b> 결과는
+        PASS도 조작 증명도 아닌 <b>"추가 확인 필요"</b> 상태입니다.</p>
     </div>
     <div class="qa">
-      <p class="q">Q. "화순 이양면·강진 병영면, 민형배 둘 다 444!"</p>
-      <p class="small">민형배 후보는 <b>2024년 총선 광양·곡성·구례 선거구</b> 후보로, 화순·강진 투표지에는
-        애초에 등장하지 않습니다. 서로 다른 선거구의 무관한 숫자가 같은 값인 것 역시 생일 역설입니다.
-        (그 선거를 직접 보려면 <code>--election-id 0020240410</code>로 2024 총선 데이터를 받아 돌리면 됩니다.)</p>
+      <p class="q">Q. "송도1·2동, 박찬대 3030 = 유정복 1440 동일!"</p>
+      <p class="small">박찬대와 유정복은 서로 다른 선거(국회의원/광역단체장)의 후보로 알려져 있습니다.
+        서로 다른 선거의 두 숫자를 비교하는 경우와, 같은 선거 안에서 비교하는 경우는 통계적 의미가
+        다릅니다. 같은 선거 안에서 본 인천 시도지사 T1은 동일 쌍 1개로 FLAG됐습니다
+        (기대 0.02). 이 도구는 <b>같은 선거 안에서의 동일 쌍</b>을 기대치와 비교해 σ로 보고합니다.</p>
     </div>
-    <p class="muted small">떠도는 "동일 득표" 주장 상당수는 서로 다른 선거/선거구의 무관한 숫자를 비교한 것입니다.
-      그래도 의심은 정당합니다 — 그래서 직접 확인할 수 있게 도구를 공개합니다.</p>
+    <p class="muted small">위 수치는 모두 이 저장소의 데이터로 재현·반박할 수 있습니다.
+      FLAG는 결론이 아니라 "들여다볼 지점"의 표시입니다.</p>
   </div>
 </section>
 
@@ -263,17 +267,19 @@
     <h2>Reproduce</h2>
     <h3>직접 검증하기</h3>
     <div class="note">
-      <p style="margin-top:0"><b>1) 공개 데이터로 재현</b></p>
+      <p style="margin-top:0"><b>1) 원본=가공본 무결성 확인</b> (숫자 안 건드렸나)</p>
+      <p class="small"><code>python verify_dataset.py</code></p>
+      <p><b>2) 공개 데이터로 검정 재현</b></p>
       <p class="small"><code>pip install -r requirements.txt</code><br>
         <code>cd election_verify &amp;&amp; python run_all.py</code></p>
-      <p><b>2) 원본을 직접 받기</b></p>
+      <p><b>3) 원본을 선관위에서 직접 받기</b></p>
       <p class="small"><code>python nec_download.py --type all</code><br>
-        다른 선거도: <code>python nec_download.py --election-id 0020240410 --type 국회의원</code></p>
+        다른 선거도: <code>python nec_download.py --election-id &lt;ID&gt; --type &lt;선거종류&gt;</code></p>
     </div>
     <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:16px">
-      <a class="card" href="PUBLIC_REPORT.md"><b>📄 전체 리포트</b><div class="small muted">비유로 푼 상세 결과</div></a>
+      <a class="card" href="PUBLIC_REPORT.md"><b>📄 전체 리포트</b><div class="small muted">중립 서술 + 상세 결과</div></a>
+      <a class="card" href="data/SOURCE.md"><b>🗂️ 데이터·출처</b><div class="small muted">원본/가공본·체크섬·스냅샷</div></a>
       <a class="card" href="README.md"><b>📘 사용법</b><div class="small muted">설치·실행·검정 설명</div></a>
-      <a class="card" href="data/nec_2026_local.csv.gz"><b>🗂️ 데이터</b><div class="small muted">전국 35만 행 (gz 5MB)</div></a>
       <a class="card" href="election_verify/"><b>🧪 검정 코드</b><div class="small muted">T1~T6 + 로더</div></a>
     </div>
   </div>

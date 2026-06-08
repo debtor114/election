@@ -1,7 +1,9 @@
-# 내려받은 원본 wide 데이터 (수백 MB, sparse) — git 제외. nec_download.py로 재생성.
+# 작업 폴더(원본 wide, 수백 MB) — git 제외. 동봉본은 data/raw/*.csv.gz.
 nec_data/
+nec_data_check/
 *.parquet
-# 커밋되는 데이터는 압축본만 (data/nec_2026_local.csv.gz). 비압축 36MB는 제외.
+# 비압축 가공본은 제외(압축본 data/processed/*.gz만 커밋)
+data/processed/nec_2026_local.csv
 data/nec_2026_local.csv
 
 # T3 포렌식 플롯(out/*.png)은 공개 리포트 그림이라 커밋함.

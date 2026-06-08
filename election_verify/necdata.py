@@ -60,13 +60,15 @@ def _coerce_nums(df):
 
 
 def long_path():
-    """커밋된 long 데이터셋(data/nec_2026_local.csv[.gz]) 경로."""
+    """커밋된 long 데이터셋(data/processed/nec_2026_local.csv[.gz]) 경로."""
     here = Path(__file__).resolve().parent
-    for d in (here / ".." / "data", here.parent / "data", Path("data")):
-        for name in ("nec_2026_local.csv.gz", "nec_2026_local.csv"):
-            p = Path(d) / name
-            if p.exists():
-                return p
+    roots = (here / ".." / "data", here.parent / "data", Path("data"))
+    for d in roots:
+        for sub in ("processed", ""):
+            for name in ("nec_2026_local.csv.gz", "nec_2026_local.csv"):
+                p = Path(d) / sub / name
+                if p.exists():
+                    return p
     return None
 
 

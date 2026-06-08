@@ -107,7 +107,8 @@ def main():
         print(f"{res['race'][:21]:<22}{res['n_units']:>4}{res['top2_obs']:>8}"
               f"{res['top2_mu']:>8.1f}{res['top2_sigma']:>7.1f}{res['dir_sigma']:>7.1f}"
               f"{res['dup_pairs']:>5}  {res['verdict']}")
-    print(f"\nFLAG {flags}건 (나머지 PASS = 우연으로 설명됨)")
+    print(f"\nFLAG {flags}건 / 나머지 PASS. "
+          f"(PASS=우연 모델 기대 범위 내, FLAG=기대치 초과→추가 확인. 어느 쪽도 결론 아님)")
 
 
 if __name__ == "__main__":

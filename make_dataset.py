@@ -42,10 +42,12 @@ def melt_type(fp, etype):
 
 def main():
     base = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("nec_data")
-    out = Path("data"); out.mkdir(exist_ok=True)
+    out = Path("data/processed"); out.mkdir(parents=True, exist_ok=True)
     frames = []
     for t in TYPES:
-        fp = base / t / "_combined.csv"
+        fp = base / t / "_combined.csv"          # nec_download 출력 구조
+        if not fp.exists():
+            fp = Path("data/raw") / f"{t}.csv.gz"  # repo 동봉 원본
         if not fp.exists():
             print(f"  - {t}: 없음(스킵)"); continue
         m = melt_type(fp, t)

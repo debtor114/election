@@ -1,49 +1,58 @@
-# NEC 개표 데이터 검증 (6·3 지방선거)
+# NEC 개표 데이터 검증 도구 (6·3 지방선거)
 
 대한민국 중앙선거관리위원회 선거통계시스템(info.nec.go.kr)의 **읍면동별 개표결과**를
-공개 엔드포인트로 내려받고, 떠도는 개표 의혹을 **재현 가능한 통계 검정**으로 판정한다.
+공개 엔드포인트로 내려받아, 개표 데이터를 **재현 가능한 통계 검정**에 넣는 도구다.
+출력은 **단서·반증**이지 평결이 아니다.
 
-> 📊 **한눈에 보기 →** [`index.html`](index.html) (결과 대시보드)  ·  📄 상세 → [`PUBLIC_REPORT.md`](PUBLIC_REPORT.md)
->
-> GitHub Pages를 켜면(Settings → Pages → main 브랜치) `https://<사용자>.github.io/<repo>/` 에서
-> 대시보드가 바로 열립니다. 로컬에선 `index.html`을 브라우저로 열면 됩니다.
+> 📊 **한눈에 보기(대시보드) → https://debtor114.github.io/election/**  ·  📄 상세 → [`PUBLIC_REPORT.md`](PUBLIC_REPORT.md)
 
-> ⚠️ **목적은 팩트체크다.** 이 도구는 부정을 "증명"하지 않는다. 각 검정은 (관측값)과
-> (우연 기대치)를 함께 내고 **PASS(정상) / FLAG(정밀조사 대상)** 만 표시한다.
-> FLAG는 "우연으로 설명하기 어렵다"는 뜻일 뿐, 그 자체가 부정의 증거가 아니다.
-> 전국 수백 개 선거를 동시에 보면 우연한 FLAG가 나온다(다중비교)는 점을 항상 감안하라.
+> ⚠️ **이건 "검증 도구"이지 "평결"이 아니다.** 각 검정은 (관측값)과 (우연이라면 나올 기대치)를
+> 함께 내고 **PASS(우연 모델로 설명되는 범위) / FLAG(기대치를 통계적으로 초과 → 더 볼 지점)** 만 표시한다.
+> **FLAG도 PASS도 그 자체로 부정·결백의 증명이 아니다.** 전국 ~1,245개 선거를 동시에 보면 우연한 FLAG가
+> 몇 건 나온다(다중비교). 해석은 읽는 사람의 몫이고, 데이터·코드·임계값을 전부 공개하니 직접 반박·재현하라.
 
 ## 빠른 시작
+
+데이터(원본·가공본)가 repo에 동봉돼 있어 **clone만 하면 바로 재현**된다.
 
 ```bash
 pip install -r requirements.txt
 
-# 1) 데이터 받기 (선관위에서 직접) — 전국·7종 (시간 걸림)
-python nec_download.py --type all --out nec_data
-#   또는 일부만:  python nec_download.py --type 시도지사 --sido 전라남도
+# 1) 무결성 확인 — 가공본이 원본 숫자를 안 건드렸나 (1줄)
+python verify_dataset.py
 
-# 2) 검증 배터리 실행
+# 2) 검증 배터리 실행 (동봉 데이터로 자동 재현)
 cd election_verify
 python run_all.py                 # 전체 요약 리포트
 python run_all.py 시도지사         # 특정 선거종류
 python tests/T3_turnout_forensics.py 시도지사   # 개별 검정 + 플롯
+
+# 3) (선택) 원본을 선관위에서 직접 다시 받기
+python nec_download.py --type all --out nec_data
 ```
 
 ## 구성
 
 ```
 nec-election-verify/
-├── nec_download.py            # T0: 선관위 읍면동별 개표결과 다운로더 (requests 전용)
+├── index.html                # 결과 대시보드 (GitHub Pages)
+├── PUBLIC_REPORT.md          # 공개 리포트 (중립 서술)
+├── nec_download.py           # T0: 선관위 읍면동별 개표결과 다운로더 (requests 전용)
+├── make_dataset.py           # 원본(wide) → 가공본(long) 변환
+├── verify_dataset.py         # 원본 = 가공본(숫자 불변) 무결성 검증
 ├── check_duplicate_votes.py  # T1 원형(단일 파일 버전)
-├── SPEC_election_verification.md   # 검정 배터리 작업 명세
+├── SPEC_election_verification.md   # 검정 명세 (결과 보기 전 고정)
+├── data/
+│   ├── raw/<선거종류>.csv.gz   # 손대지 않은 원본 (7종) + CHECKSUMS.sha256
+│   ├── processed/nec_2026_local.csv.gz   # 가공본 (long, 35만 행)
+│   ├── SOURCE.md             # 출처·스냅샷·체크섬·검증법
+│   └── shortage_list.example.csv   # T5·T6용 부족 투표소 양식
 ├── election_verify/
-│   ├── necdata.py            # 공용 로더 (tidy 스키마, race/후보 식별)
+│   ├── necdata.py            # 공용 로더 (원본 없으면 동봉 가공본 자동 사용)
 │   ├── run_all.py            # 일괄 실행 + 요약 리포트
-│   ├── README.md            # 검정 상세
-│   └── tests/T1..T6.py      # 개별 검정
-├── data/shortage_list.example.csv   # T5·T6용 부족 투표소 목록 양식
-├── requirements.txt
-└── .gitignore               # nec_data/ 등 대용량·생성물 제외
+│   ├── tests/T1..T6.py      # 개별 검정
+│   └── out/T3_*.png          # 포렌식 플롯 7종
+├── requirements.txt · LICENSE (MIT) · .gitignore
 ```
 
 ## 데이터 다운로더 (nec_download.py)
@@ -84,7 +93,13 @@ nec-election-verify/
 
 > "내 말을 믿어라"가 아니라 **"직접 확인해봐라"** 가 이 프로젝트의 태도입니다.
 
-## 데이터 출처·라이선스
-- 출처: 중앙선거관리위원회 선거통계시스템 (https://info.nec.go.kr) — 공개 데이터.
-- 코드: **MIT** ([`LICENSE`](LICENSE)) — 자유 사용·수정·재배포.
-- 데이터: 가공본(`data/nec_2026_local.csv.gz`)을 함께 포함. 재배포 시 출처(선관위)를 밝히세요.
+## 데이터 출처·투명성
+
+"내 파일을 믿어라"가 아니라 **"공식 출처에서 그대로 다시 만들어 내고, 아무것도 안 건드렸음을
+확인할 수 있다"** 를 목표로 구성했다. 자세히: [`data/SOURCE.md`](data/SOURCE.md).
+
+- **출처**: 중앙선거관리위원회 https://info.nec.go.kr (공개 데이터, `electionId=0020260603`, 스냅샷 2026-06-08).
+- **원본/가공 분리**: `data/raw/`(손대지 않은 원본) + `data/processed/`(가공본) + 둘을 잇는 변환 코드(`make_dataset.py`).
+- **체크섬**: `data/raw/CHECKSUMS.sha256` — 누구나 선관위에서 다시 받아 값 일치를 대조 가능.
+- **무결성 검증**: `python verify_dataset.py` — 가공본이 원본 숫자를 안 건드렸음을 1줄로 확인.
+- **코드 라이선스**: **MIT** ([`LICENSE`](LICENSE)). 데이터 재배포 시 출처(선관위)·이용약관(공공누리 등) 확인.

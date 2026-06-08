@@ -57,8 +57,9 @@ def main():
     if not types:
         print("nec_data/ 에 데이터가 없습니다. nec_download.py 먼저 실행."); return
     print("=" * 70)
-    print("6·3 지방선거 개표 검증 배터리 — 요약 리포트")
-    print("원칙: 관측값 + 기대치를 함께. FLAG = 정밀조사 대상(부정 '증거' 아님).")
+    print("6·3 지방선거 개표 검증 도구 — 요약")
+    print("PASS=우연 모델 기대 범위 내 / FLAG=기대치를 통계적으로 초과(추가 확인 지점).")
+    print("FLAG도 PASS도 그 자체로 부정·결백의 증명이 아님. 해석은 읽는 사람의 몫.")
     print("=" * 70)
     total_flags = 0
     for etype in types:
@@ -85,8 +86,8 @@ def main():
         r6 = T6.run(df, etype)
         print(f"  T6 부족vs투표율: {r6.get('msg') if r6.get('verdict')=='SKIP' else r6}")
     print("\n" + "=" * 70)
-    print(f"총 FLAG(정밀조사 후보) 합계: {total_flags}건")
-    print("FLAG는 '우연으로 설명 어려움'을 뜻할 뿐, 그 자체가 부정의 증거가 아님.")
+    print(f"FLAG(기대치 초과 → 추가 확인 지점) 합계: {total_flags}건")
+    print("FLAG는 '여기를 더 보라'는 표시이지 결론이 아님. 다중비교(여러 선거 동시 검사)를 감안할 것.")
     print("=" * 70)
 
 
