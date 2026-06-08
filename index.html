@@ -88,6 +88,8 @@
   tbody tr:hover{background:var(--bg)}
   td.c,th.c{text-align:center}
   td.name{font-weight:500;color:var(--ink)}
+  th.help{cursor:help}
+  th.help span{border-bottom:1px dotted var(--neutral)}
 
   /* chips */
   .chip{display:inline-block;padding:3px 11px;border-radius:9999px;font-size:12px;font-weight:500;
@@ -164,13 +166,13 @@
   <div class="dots"></div>
   <div class="wrap">
     <p class="overline">공개 데이터 · 재현 가능한 통계 검증</p>
-    <h1 class="title">6·3 지방선거 개표 데이터를 통계로 따져봤습니다</h1>
+    <h1 class="title">6·3 지방선거 개표 데이터를 통계로</h1>
     <p class="lede">선관위 공개 읍면동별 개표결과를 7개 선거·약 1,200개 선거단위에 걸쳐 5가지 통계
       검정에 넣었습니다. 떠도는 의혹을 누구나 재현·반박할 수 있는 숫자로 바꿔본 결과입니다.</p>
     <div class="hero-cta">
       <a href="#verdict" class="btn primary">결과 보기</a>
-      <a href="PUBLIC_REPORT.md" class="btn secondary">전체 리포트</a>
-      <a href="data/SOURCE.md" class="btn secondary">데이터·출처</a>
+      <a href="https://github.com/debtor114/election/blob/main/PUBLIC_REPORT.md" class="btn secondary">전체 리포트</a>
+      <a href="https://github.com/debtor114/election/blob/main/data/SOURCE.md" class="btn secondary">데이터·출처</a>
     </div>
   </div>
 </header>
@@ -194,8 +196,15 @@
     <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>선거</th><th class="c">단위</th><th class="c">T1 동일득표</th>
-          <th class="c">T2 사전vs본</th><th class="c">T3 포렌식</th><th class="c">T4 자릿수</th>
+          <th>선거</th><th class="c">단위</th>
+          <th class="c help" title="동일 득표 검정 — 두 읍면동의 득표가 똑같은 경우가 우연 기대보다 많은지 부트스트랩으로 비교(σ). 생일 역설처럼 겹침은 흔하므로 '기대치 대비 초과'를 본다.">
+            <span>T1 동일득표</span></th>
+          <th class="c help" title="사전 vs 본투표 검정 — 후보의 관내사전·선거일 득표율 관계가 부자연스럽게 완벽한 직선(R²≈1·잔차≈0)인지. 정상이면 들쭉날쭉 흩어진다.">
+            <span>T2 사전vs본</span></th>
+          <th class="c help" title="투표율 포렌식(Shpilkin) — 투표율 높은 동네에서 특정 후보 몰표가 치솟는 '혜성 꼬리'가 있는지. 정상이면 둥근 구름.">
+            <span>T3 포렌식</span></th>
+          <th class="c help" title="끝자리·벤포드 — 득표수 자릿수 분포의 균일성. 개표수엔 원래 잘 안 맞아 거의 항상 형식적 경고 → 보조·약함, 단독 근거 금지.">
+            <span>T4 자릿수</span></th>
         </tr></thead>
         <tbody>
           <tr><td class="name">시도지사</td><td class="c">17</td>
@@ -362,11 +371,25 @@
         비유하면, 두 사람 생일이 같은 건 흔하지만(작은 값) <i>생일과 전화번호가 동시에</i> 같으면 이상하죠
         (큰 값 둘). 인천이 후자입니다.</p>
       <p style="margin-top:10px"><b>단, 인천도 결론은 아닙니다.</b> 송도1·2동은 인접 신도시로 유권자 수
-        (사전 4546 vs 4539)·득표율이 거의 같아, '교환가능' 가정의 단순 null이 과대평가했을 여지가 있습니다.
-        유사-이웃을 통제한 더 나은 null이 다음 단계 — 그래야 "이상치"인지 "닮은 이웃"인지 갈립니다.</p>
+        (사전 4546 vs 4539)·득표율이 거의 같아, '교환가능' 가정의 단순 null이 과대평가했을 여지가 있습니다.</p>
     </div>
-    <p class="small muted" style="margin-top:14px">전수조사·유의성 코드: <code>census_duplicates.py</code> ·
-      <code>census_significance.py</code> (repo 포함, 누구나 재현).</p>
+
+    <h3 class="sub" style="margin-top:40px">더 나은 null로 한 번 더 — '유사-이웃 통제'</h3>
+    <p class="sec-note">두 읍면동을 <b>인구학적 쌍둥이(진짜 득표율이 동일)로 가정</b>하는, '닮은 이웃' 가설에
+      가장 유리한 null을 돌렸습니다(<code>neighbor_null.py</code>). 결과는 함정을 조심해야 합니다.</p>
+    <div class="callout">
+      <p>쌍둥이로 가정해도 8건 각각은 개별적으로 드뭅니다(1/889 ~ &lt;1/200,000). <b>하지만 이건 '이미 일치한
+        쌍'만 골라 본 사후선택(look-elsewhere)입니다.</b> 전국 읍면동 쌍은 <b>약 171만 개</b> — 이만큼 비교하면
+        개별적으로 드문 일치도 <b>우연히 ~10건은 나오는 게 정상</b>이고(관측 8 ≈ 기대 ~10), 실제 8건은 오히려
+        그보다 적습니다. <b>즉 "쌍둥이여도 드물다"가 곧 "이상"은 아닙니다.</b></p>
+      <p style="margin-top:10px"><b>최종:</b> 더 나은 null을 써도 결론은 안 뒤집힙니다. 전체 패턴은 우연과
+        일치합니다. <b>인천 한 건만</b> race 단위에서 따로 튀지만(+6σ, 큰 값 둘), 유사-이웃을 통제하면
+        그마저 약해집니다. <b>이 데이터만으로는 "이상치"인지 "닮은 이웃"인지 단정할 수 없습니다</b> —
+        호기심의 대상이지 결론이 아닙니다.</p>
+    </div>
+    <p class="small muted" style="margin-top:14px">전수조사·유의성·유사이웃 null 코드:
+      <code>census_duplicates.py</code> · <code>census_significance.py</code> ·
+      <code>neighbor_null.py</code> · <code>national_scan.py</code> (repo 포함, 누구나 재현).</p>
   </div>
 </section>
 
@@ -431,9 +454,9 @@ cd election_verify <span class="c">&amp;&amp;</span> python run_all.py</span></d
         <span class="codeblock">python nec_download.py --type all</span></div>
     </div>
     <div class="links">
-      <a class="card lcard" href="PUBLIC_REPORT.md"><b>전체 리포트</b><span class="d">중립 서술 + 상세 결과</span></a>
-      <a class="card lcard" href="data/SOURCE.md"><b>데이터·출처</b><span class="d">원본/가공본·체크섬·스냅샷</span></a>
-      <a class="card lcard" href="README.md"><b>사용법</b><span class="d">설치·실행·검정 설명</span></a>
+      <a class="card lcard" href="https://github.com/debtor114/election/blob/main/PUBLIC_REPORT.md"><b>전체 리포트</b><span class="d">중립 서술 + 상세 결과</span></a>
+      <a class="card lcard" href="https://github.com/debtor114/election/blob/main/data/SOURCE.md"><b>데이터·출처</b><span class="d">원본/가공본·체크섬·스냅샷</span></a>
+      <a class="card lcard" href="https://github.com/debtor114/election/blob/main/README.md"><b>사용법</b><span class="d">설치·실행·검정 설명</span></a>
       <a class="card lcard" href="https://github.com/debtor114/election"><b>GitHub ↗</b><span class="d">코드 전체 · fork 환영</span></a>
     </div>
   </div>
