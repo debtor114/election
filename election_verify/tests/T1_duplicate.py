@@ -45,21 +45,26 @@ def run(race_df, election_type, gubun=nd.GUBUN_EARLY, seed=0):
     full = [tuple(int(x) for x in V[i]) + (int(totals[i]),) for i in range(n)]
     dup_pairs = pair_count(full)
 
-    # null: 총표 고정 + 득표율 부트스트랩
+    # 승자(전체 1위) 후보 — 단일후보 동일 지표에 사용
+    win = race_df[cc].sum().idxmax()
+    wi = cc.index(win)
+    win_single_pairs = pair_count(V[:, wi])     # 승자 단독 동일 쌍 (관측)
+
+    # null: 총표 고정 + 득표율 부트스트랩 (top2 + 승자단독 동시 계산)
     rng = np.random.default_rng(seed)
     safe = totals.copy(); safe[safe == 0] = 1
     shares = V / safe[:, None]
     sims = np.empty(N_SIM)
+    sims_ws = np.empty(N_SIM)
     for k in range(N_SIM):
         idx = rng.integers(0, n, n)
         sim = np.round(totals[:, None] * shares[idx]).astype(int)
         sims[k] = pair_count([tuple(sorted(r)[-2:]) for r in sim])
+        sims_ws[k] = pair_count(sim[:, wi])
     mu, sd = sims.mean(), sims.std()
     z = (top2_pairs - mu) / sd if sd > 0 else 0.0
-
-    # 방향성: 상위2 동일쌍에서 '전체 1위 후보'가 두 단위 모두 1위인 비율
-    win = race_df[cc].sum().idxmax()
-    wi = cc.index(win)
+    mu_ws, sd_ws = sims_ws.mean(), sims_ws.std()
+    z_ws = (win_single_pairs - mu_ws) / sd_ws if sd_ws > 0 else 0.0
     groups = {}
     for i, k in enumerate(top2):
         groups.setdefault(k, []).append(i)
@@ -81,6 +86,8 @@ def run(race_df, election_type, gubun=nd.GUBUN_EARLY, seed=0):
         "test": "T1", "race": "",
         "n_units": n, "n_cand": len(cc),
         "single_max": max(single.values()),
+        "win_single_obs": win_single_pairs, "win_single_mu": round(mu_ws, 2),
+        "win_single_sigma": round(z_ws, 2),
         "top2_obs": top2_pairs, "top2_mu": round(mu, 2), "top2_sd": round(sd, 2),
         "top2_sigma": round(z, 2),
         "dir_obs": favor, "dir_M": M, "dir_sigma": round(zd, 2),

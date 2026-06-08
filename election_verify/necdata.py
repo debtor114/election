@@ -95,17 +95,30 @@ def load_from_long(election_type):
     return _coerce_nums(wide)
 
 
+def raw_wide_path(election_type):
+    """동봉된 원본 wide(data/raw/<선거종류>.csv.gz) 경로."""
+    here = Path(__file__).resolve().parent
+    for d in (here / ".." / "data" / "raw", here.parent / "data" / "raw", Path("data/raw")):
+        p = Path(d) / f"{election_type}.csv.gz"
+        if p.exists():
+            return p
+    return None
+
+
 def load_type(election_type, base="nec_data"):
-    """선거종류 1개 합본 로드. raw wide(nec_data/) 우선, 없으면 커밋된 long에서 복원."""
+    """선거종류 1개 합본 로드.
+    우선순위: 작업폴더 nec_data/ → 동봉 원본 data/raw/*.csv.gz → 가공본 long 복원."""
     fp = base_dir(base) / election_type / "_combined.csv"
-    if fp.exists():
+    if not fp.exists():
+        fp = raw_wide_path(election_type)        # 동봉 원본 wide (빠름)
+    if fp is not None and Path(fp).exists():
         df = pd.read_csv(fp, dtype={"선거구": str})
         df.columns = [c.replace("정당별 득표수_", CAND_PREFIX) for c in df.columns]
         return _coerce_nums(df)
-    df = load_from_long(election_type)
+    df = load_from_long(election_type)           # 최후: long → wide 복원
     if df is None:
         raise FileNotFoundError(
-            f"{fp} 도, long 데이터(data/nec_2026_local.csv.gz)도 없음 — "
+            f"{election_type}: nec_data/·data/raw/·data/processed/ 어디에도 없음 — "
             f"nec_download.py 또는 make_dataset.py 먼저 실행")
     return df
 

@@ -153,7 +153,7 @@
       <a href="#verdict">결과</a>
       <a href="#tests">검정</a>
       <a href="#flags">FLAG</a>
-      <a href="#plots">그림</a>
+      <a href="#census">전수조사</a>
       <a href="#qa">Q&amp;A</a>
       <a href="https://github.com/debtor114/election" class="cta">GitHub ↗</a>
     </div>
@@ -306,6 +306,70 @@
   </div>
 </section>
 
+<section id="census">
+  <div class="wrap">
+    <p class="kicker">Full census · 전수조사</p>
+    <h2 class="sec">동일득표 8건 전부 — 그리고 "8건"이 유의한가</h2>
+    <p class="sec-note">개별 제보를 기다리지 않고, 전국 7개 선거 모든 읍면동을 전수조사했습니다.
+      기준: <b>같은 선거의 두 읍면동에서 상위 2후보 득표가 동시에 정확히 같고, 1위 득표 ≥ 100표.</b>
+      제보된 5건(시도지사)보다 많은 <b>8건</b>이 나왔습니다.</p>
+    <div class="tbl-wrap" style="margin-top:20px">
+      <table>
+        <thead><tr><th class="c">#</th><th>선거</th><th>두 읍면동</th><th>동시 일치 값</th><th class="c">강도</th></tr></thead>
+        <tbody>
+          <tr><td class="c">1</td><td class="name">인천 시도지사</td><td>송도1동 · 송도2동</td>
+            <td>박찬대 <b>3030</b> · 유정복 <b>1440</b></td><td class="c"><span class="chip flag">+6.3σ</span></td></tr>
+          <tr><td class="c">2</td><td class="name">전남 시도지사</td><td>북하면 · 엄다면</td>
+            <td>민형배 606 · 이정현 57</td><td class="c"><span class="chip weak">약</span></td></tr>
+          <tr><td class="c">3</td><td class="name">전남 시도지사</td><td>삼일동 · 하의면</td>
+            <td>민형배 506 · 이정현 42</td><td class="c"><span class="chip weak">약</span></td></tr>
+          <tr><td class="c">4</td><td class="name">전남 시도지사</td><td>이양면 · 병영면</td>
+            <td>민형배 444 · 이정현 46</td><td class="c"><span class="chip weak">약</span></td></tr>
+          <tr><td class="c">5</td><td class="name">전남 시도지사</td><td>노동면 · 팔금면</td>
+            <td>민형배 356 · 이정현 42</td><td class="c"><span class="chip weak">약</span></td></tr>
+          <tr><td class="c">6</td><td class="name">경남 광역비례</td><td>중앙동 · 병곡면</td>
+            <td>국민의힘 280 · 민주당 226</td><td class="c"><span class="chip weak">약</span></td></tr>
+          <tr><td class="c">7</td><td class="name">경북 교육감</td><td>월성동 · 지례면</td>
+            <td>임종식 153 · 김상동 110</td><td class="c"><span class="chip weak">약</span></td></tr>
+          <tr><td class="c">8</td><td class="name">경북 교육감</td><td>송라면 · 도개면</td>
+            <td>임종식 140 · 김상동 119</td><td class="c"><span class="chip weak">약</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub" style="margin-top:40px">"8건이라는 개수"는 유의하지 않습니다</h3>
+    <p class="sec-note">같은 기준으로 전국을 부트스트랩(우연 모델)하면, 이런 쌍은 <b>우연만으로도 ~10건</b>
+      나오는 게 정상입니다. 실제 8건은 오히려 그보다 적습니다.</p>
+    <div class="tbl-wrap" style="margin-top:16px;max-width:720px">
+      <table>
+        <thead><tr><th>구분</th><th class="c">관측</th><th class="c">우연 기대</th><th class="c">결과</th></tr></thead>
+        <tbody>
+          <tr><td class="name">전국 전체</td><td class="c">8건</td><td class="c">9.9 ± 3.1</td>
+            <td class="c"><span class="chip pass">−0.6σ · 우연 범위</span></td></tr>
+          <tr><td class="name">인천만</td><td class="c">1건</td><td class="c">0.02</td>
+            <td class="c"><span class="chip flag">+6.3σ · 예외</span></td></tr>
+          <tr><td class="name">인천 제외</td><td class="c">7건</td><td class="c">9.9</td>
+            <td class="c"><span class="chip pass">−0.9σ · 우연 범위</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub" style="margin-top:40px">왜 인천만 주목하나 — '개수'가 아니라 '값의 크기'</h3>
+    <div class="callout">
+      <p><b>핵심은 몇 곳이냐가 아니라 어떤 값이 겹쳤느냐입니다.</b> 작은 수(2위 42~57표)는 우연히도 쉽게
+        겹칩니다 — 전남·경남·경북 7건이 그렇고, 그래서 우연 범위입니다. 반면 <b>인천은 박찬대 3030
+        <i>그리고</i> 유정복 1440 — 큰 수 두 개가 동시에 일치</b>합니다. 이 확률은 극히 낮아 <b>+6.3σ</b>.
+        비유하면, 두 사람 생일이 같은 건 흔하지만(작은 값) <i>생일과 전화번호가 동시에</i> 같으면 이상하죠
+        (큰 값 둘). 인천이 후자입니다.</p>
+      <p style="margin-top:10px"><b>단, 인천도 결론은 아닙니다.</b> 송도1·2동은 인접 신도시로 유권자 수
+        (사전 4546 vs 4539)·득표율이 거의 같아, '교환가능' 가정의 단순 null이 과대평가했을 여지가 있습니다.
+        유사-이웃을 통제한 더 나은 null이 다음 단계 — 그래야 "이상치"인지 "닮은 이웃"인지 갈립니다.</p>
+    </div>
+    <p class="small muted" style="margin-top:14px">전수조사·유의성 코드: <code>census_duplicates.py</code> ·
+      <code>census_significance.py</code> (repo 포함, 누구나 재현).</p>
+  </div>
+</section>
+
 <section id="plots">
   <div class="wrap">
     <p class="kicker">Forensic plots</p>
@@ -341,13 +405,14 @@
       </div>
       <div class="qa">
         <p class="q">Q. "송도1·2동, 박찬대 3030 = 유정복 1440 동일!"</p>
-        <p>박찬대와 유정복은 서로 다른 선거(국회의원/광역단체장)의 후보로 알려져 있습니다. 서로 다른
-          선거의 두 숫자를 비교하는 경우와, 같은 선거 안에서 비교하는 경우는 통계적 의미가 다릅니다.
-          같은 선거 안에서 본 인천 시도지사 T1은 동일 쌍 1개로 FLAG됐습니다(기대 0.02). 이 도구는
-          <b>같은 선거 안에서의 동일 쌍</b>을 기대치와 비교해 σ로 보고합니다.</p>
+        <p><b>사실입니다.</b> 박찬대·유정복 모두 <b>2026 인천시장</b> 후보이고, 송도1동·송도2동 관내사전에서
+          <b>박찬대 3030, 유정복 1440이 동시에 동일</b>합니다(이기붕만 61/47로 다름). 이건 8건 중에서도
+          <b>가장 통계적으로 두드러진 사례(+6.3σ)</b> — 위 <a href="#census">전수조사</a> 1번입니다.</p>
+        <p>큰 값 두 개가 동시에 일치하는 건 우연으론 거의 안 나옵니다. 다만 송도1·2동은 인접 신도시라
+          유권자·득표율이 거의 같아 단순 null이 과대평가했을 여지가 있어, <b>"추가 확인 필요"</b> 상태입니다.</p>
       </div>
       <p class="small muted">위 수치는 모두 이 저장소의 데이터로 재현·반박할 수 있습니다.
-        FLAG는 결론이 아니라 "들여다볼 지점"의 표시입니다.</p>
+        FLAG·σ는 결론이 아니라 "들여다볼 지점"의 표시입니다.</p>
     </div>
   </div>
 </section>

@@ -28,3 +28,8 @@ venv/
 # OS
 Thumbs.db
 .DS_Store
+
+# 스캔/전수조사 출력물(재생성 가능)
+census_top2.txt
+census_sig.txt
+national_scan_out.txt
