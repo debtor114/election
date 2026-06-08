@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6·3 지방선거 개표 데이터 검증 — 한눈에 보기</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --line:#272b35; --ink:#e8eaed; --mut:#9aa1ad;
+    --pass:#2ecc71; --passbg:#13361f; --flag:#f4b740; --flagbg:#3a2f12;
+    --accent:#6ea8fe; --accent2:#b794f6;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Pretendard","Malgun Gothic",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    line-height:1.7;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+  header{border-bottom:1px solid var(--line);padding:54px 0 40px;background:
+    radial-gradient(1200px 300px at 50% -100px, rgba(110,168,254,.12), transparent)}
+  .eyebrow{color:var(--mut);font-size:13px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 14px}
+  h1{font-size:clamp(28px,5vw,46px);line-height:1.18;margin:0 0 18px;font-weight:800;letter-spacing:-.02em}
+  h1 .hl{color:var(--pass)}
+  .lede{font-size:18px;color:#cfd4dc;max-width:760px;margin:0 0 22px}
+  .nav{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+  .nav a{background:var(--card);border:1px solid var(--line);padding:9px 14px;border-radius:999px;
+    color:var(--ink);font-size:14px;font-weight:600}
+  .nav a:hover{border-color:var(--accent);text-decoration:none}
+  section{padding:46px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);margin:0 0 8px;font-weight:700}
+  h3{font-size:26px;margin:0 0 18px;font-weight:800;letter-spacing:-.01em}
+  p{color:#cfd4dc}
+  .muted{color:var(--mut)}
+  .grid{display:grid;gap:16px}
+  .verdict{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .stat .n{font-size:38px;font-weight:800;letter-spacing:-.02em}
+  .stat .n.pass{color:var(--pass)} .stat .n.flag{color:var(--flag)}
+  .stat .l{color:var(--mut);font-size:14px;margin-top:4px}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:6px;background:var(--card);
+    border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line)}
+  th{background:#1c2029;color:var(--mut);font-weight:700;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase}
+  tr:last-child td{border-bottom:none}
+  td.center,th.center{text-align:center}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12.5px;font-weight:700;white-space:nowrap}
+  .pill.pass{background:var(--passbg);color:var(--pass)}
+  .pill.flag{background:var(--flagbg);color:var(--flag)}
+  .pill.skip{background:#23262e;color:var(--mut)}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .card .ico{font-size:26px}
+  .card h4{margin:10px 0 6px;font-size:18px}
+  .card .res{margin-top:12px;font-size:13.5px}
+  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+  .gallery figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .gallery img{width:100%;display:block;background:#fff}
+  .gallery figcaption{padding:10px 14px;font-size:13.5px;color:var(--mut)}
+  .qa{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:12px;padding:18px 20px;margin-bottom:14px}
+  .qa .q{font-weight:700;margin:0 0 6px}
+  .callout{background:var(--flagbg);border:1px solid #5a4a1e;border-radius:14px;padding:18px 20px;color:#f3e3c0}
+  .note{background:#141821;border:1px dashed var(--line);border-radius:14px;padding:18px 20px}
+  footer{padding:40px 0 70px;color:var(--mut);font-size:14px}
+  code{background:#0b0d12;border:1px solid var(--line);border-radius:6px;padding:1.5px 6px;font-size:13px}
+  .small{font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <p class="eyebrow">공개 데이터 · 재현 가능한 통계 검증</p>
+    <h1>6·3 지방선거 개표 데이터를<br>통계로 따져봤습니다 — <span class="hl">한눈에 보기</span></h1>
+    <p class="lede">선관위가 공개한 전국 읍면동별 개표결과를 <b>7개 선거·약 1,200개 선거단위</b>에 걸쳐
+      5가지 통계 검정으로 훑었습니다. 떠도는 의혹을 누구나 재현할 수 있는 숫자로 바꿔본 결과입니다.</p>
+    <nav class="nav">
+      <a href="#verdict">결과 요약</a>
+      <a href="#tests">검정 설명</a>
+      <a href="#flags">FLAG 해설</a>
+      <a href="#plots">포렌식 그림</a>
+      <a href="#qa">의혹 Q&amp;A</a>
+      <a href="PUBLIC_REPORT.md">전체 리포트 ↗</a>
+      <a href="README.md">사용법 ↗</a>
+      <a href="data/nec_2026_local.csv.gz">데이터 ↓</a>
+    </nav>
+  </div>
+</header>
+
+<section id="verdict">
+  <div class="wrap">
+    <h2>Bottom line</h2>
+    <h3>"우연으로 설명 안 되는 조작의 흔적"은 나오지 않았습니다.</h3>
+    <p>일부 경고(FLAG)가 떴지만, 모두 <b>우연히 그 정도는 나오는 범위</b> 안이었습니다.
+       이 페이지는 부정을 "증명"하거나 "완전무결"을 보증하지 않습니다 —
+       <b>의혹을 직접 확인할 수 있게</b> 데이터·코드·결과를 전부 공개합니다.</p>
+    <div class="verdict">
+      <div class="stat"><div class="n pass">~1,245</div><div class="l">검사한 선거단위 (T1)</div></div>
+      <div class="stat"><div class="n flag">3</div><div class="l">FLAG — 모두 우연 쌍 1~3개</div></div>
+      <div class="stat"><div class="n pass">0</div><div class="l">'복제(전 항목 동일)' 사례</div></div>
+    </div>
+
+    <h2 style="margin-top:38px">선거별 결과</h2>
+    <table>
+      <thead><tr>
+        <th>선거</th><th class="center">단위</th>
+        <th class="center">T1 동일득표</th><th class="center">T2 사전vs본</th>
+        <th class="center">T3 포렌식</th><th class="center">T4 자릿수</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>시도지사</td><td class="center">17</td>
+          <td class="center"><span class="pill pass">PASS 15</span> <span class="pill flag">FLAG 2</span></td>
+          <td class="center"><span class="pill pass">PASS 17</span></td>
+          <td class="center"><span class="pill pass">PASS</span></td>
+          <td class="center"><span class="pill skip">약함</span></td></tr>
+        <tr><td>교육감</td><td class="center">17</td>
+          <td class="center"><span class="pill pass">PASS 17</span></td>
+          <td class="center"><span class="pill pass">PASS 17</span></td>
+          <td class="center"><span class="pill pass">PASS</span></td>
+          <td class="center"><span class="pill skip">약함</span></td></tr>
+        <tr><td>구시군의장</td><td class="center">222</td>
+          <td class="center"><span class="pill pass">PASS 222</span></td>
+          <td class="center"><span class="pill pass">PASS 221</span></td>
+          <td class="center"><span class="pill pass">PASS</span></td>
+          <td class="center"><span class="pill skip">약함</span></td></tr>
+        <tr><td>시도의원</td><td class="center">412</td>
+          <td class="center"><span class="pill pass">PASS 412</span></td>
+          <td class="center"><span class="pill pass">PASS 265</span></td>
+          <td class="center"><span class="pill pass">PASS</span></td>
+          <td class="center"><span class="pill skip">약함</span></td></tr>
+        <tr><td>구시군의원</td><td class="center">392</td>
+          <td class="center"><span class="pill pass">PASS 392</span></td>
+          <td class="center"><span class="pill pass">PASS</span></td>
+          <td class="center"><span class="pill pass">PASS</span></td>
+          <td class="center"><span class="pill skip">약함</span></td></tr>
+        <tr><td>광역비례</td><td class="center">17</td>
+          <td class="center"><span class="pill pass">PASS 16</span> <span class="pill flag">FLAG 1</span></td>
+          <td class="center"><span class="pill pass">PASS 17</span></td>
+          <td class="center"><span class="pill pass">PASS</span></td>
+          <td class="center"><span class="pill skip">약함</span></td></tr>
+        <tr><td>기초비례</td><td class="center">168</td>
+          <td class="center"><span class="pill pass">PASS 168</span></td>
+          <td class="center"><span class="pill pass">PASS 167</span></td>
+          <td class="center"><span class="pill pass">PASS</span></td>
+          <td class="center"><span class="pill skip">약함</span></td></tr>
+      </tbody>
+    </table>
+    <p class="small muted" style="margin-top:10px">T2/T3는 무투표·소표본 단위를 제외하고 집계.
+      T4(끝자리·벤포드)는 개표 득표수에 원래 잘 안 맞아 거의 항상 경고가 떠 <b>참고용(약함)</b>으로만 표기.</p>
+  </div>
+</section>
+
+<section id="tests">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <h3>5가지 검정을 비유로</h3>
+    <div class="cards">
+      <div class="card">
+        <div class="ico">🎂</div>
+        <h4>T1. 동일 득표 — 생일 역설</h4>
+        <p class="small">교실에 23명만 모여도 생일 같은 둘이 있을 확률이 50%. "똑같은 표가 있다"는 건
+          생각보다 자주 일어납니다. 실제 겹친 수를 <b>우연이라면 나올 수</b>와 비교합니다.</p>
+        <div class="res small"><span class="pill pass">대부분 PASS</span> 복제 사례 0건</div>
+      </div>
+      <div class="card">
+        <div class="ico">📏</div>
+        <h4>T2. 사전 vs 본투표 — 자로 그은 직선</h4>
+        <p class="small">모든 동네에서 "사전 = 본 + 일정값"처럼 자로 그은 듯 완벽하면 의심.
+          정상이면 들쭉날쭉 흩어집니다.</p>
+        <div class="res small"><span class="pill pass">전부 PASS</span> 완벽한 직선 0건</div>
+      </div>
+      <div class="card">
+        <div class="ico">☄️</div>
+        <h4>T3. 투표율×몰표 — 혜성 꼬리</h4>
+        <p class="small">투표함을 채우면 고투표율 동네일수록 특정 후보가 치솟는 '혜성 꼬리'가 생깁니다.
+          정상이면 둥근 구름.</p>
+        <div class="res small"><span class="pill pass">7/7 둥근 구름</span></div>
+      </div>
+      <div class="card">
+        <div class="ico">🎲</div>
+        <h4>T4. 끝자리·벤포드 — 보조용</h4>
+        <p class="small">사람이 지어낸 숫자는 끝자리가 고르지 않은 경향. 단 개표수는 원래 잘 안 맞아
+          거의 항상 경고 → <b>단독 근거 금지</b>.</p>
+        <div class="res small"><span class="pill skip">약함</span></div>
+      </div>
+      <div class="card">
+        <div class="ico">🗳️</div>
+        <h4>T5·T6. 부족 투표소 — 목록 필요</h4>
+        <p class="small">"투표지 부족" 투표소가 특정 정당에 유리했는지, 단순 고투표율 탓인지 검정.
+          공식 부족 목록을 넣으면 작동.</p>
+        <div class="res small"><span class="pill skip">대기(목록 필요)</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="flags">
+  <div class="wrap">
+    <h2>About those flags</h2>
+    <h3>FLAG 3건, 왜 "우연"인가</h3>
+    <table>
+      <thead><tr><th>곳</th><th class="center">겹친 쌍</th><th class="center">기대치</th><th>해석</th></tr></thead>
+      <tbody>
+        <tr><td>인천 시도지사</td><td class="center">1</td><td class="center">0.02 (7σ)</td>
+          <td>158개 동네를 짝지으면 약 1.2만 쌍 — 1번쯤 겹침</td></tr>
+        <tr><td>전남 시도지사</td><td class="center">3</td><td class="center">0.4 (3.9σ)</td>
+          <td>297개 동네(약 4.4만 쌍)에서 3번</td></tr>
+        <tr><td>충북 광역비례</td><td class="center">1</td><td class="center">0.09 (3σ)</td>
+          <td>153개 동네에서 1번</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:18px">
+      <b>핵심 — 여러 번 보면 드문 일도 나온다(다중비교).</b> 약 1,245개 선거를 동시에 검사하면,
+      "1000번에 1번" 같은 드문 일도 평균 한두 번은 그냥 나옵니다. 복권 1,245장 중 한 장 당첨이
+      이상하지 않은 것과 같습니다. 게다가 이 3건은 모두 겹친 쌍이 1~3개뿐이고
+      <b>"한 정당으로 쏠렸는가" 검사에서도 정상</b>이었습니다. 조직적 조작이라면 전국적·한 방향으로
+      나타나야 하는데 그런 패턴은 없었습니다.
+    </div>
+  </div>
+</section>
+
+<section id="plots">
+  <div class="wrap">
+    <h2>Forensic plots</h2>
+    <h3>투표율 × 승자 득표율 — 전부 '둥근 구름'</h3>
+    <p class="muted">왼쪽 산점도/오른쪽 밀도. 부정선거 신호인 오른쪽 위 '혜성 꼬리'는 어디서도 없습니다.</p>
+    <div class="gallery">
+      <figure><img src="election_verify/out/T3_시도지사.png" alt="시도지사"><figcaption>시도지사</figcaption></figure>
+      <figure><img src="election_verify/out/T3_교육감.png" alt="교육감"><figcaption>교육감</figcaption></figure>
+      <figure><img src="election_verify/out/T3_구시군의장.png" alt="구시군의장"><figcaption>구시군의장</figcaption></figure>
+      <figure><img src="election_verify/out/T3_시도의원.png" alt="시도의원"><figcaption>시도의원</figcaption></figure>
+      <figure><img src="election_verify/out/T3_구시군의원.png" alt="구시군의원"><figcaption>구시군의원</figcaption></figure>
+      <figure><img src="election_verify/out/T3_광역비례.png" alt="광역비례"><figcaption>광역비례</figcaption></figure>
+      <figure><img src="election_verify/out/T3_기초비례.png" alt="기초비례"><figcaption>기초비례</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="qa">
+  <div class="wrap">
+    <h2>Direct answers</h2>
+    <h3>떠돌던 사례들에 대한 답변</h3>
+    <div class="qa">
+      <p class="q">Q. "송도1·2동, 박찬대 3030 = 유정복 1440 동일!"</p>
+      <p class="small">박찬대(국회의원)와 유정복(시장/도지사)은 <b>서로 다른 선거</b>입니다. 무관한 두 숫자가
+        한 동네에서 우연히 겹친 것으로, 통계적으로 놀랄 일이 아닙니다(생일 역설). 같은 선거 안에서 본
+        인천 시도지사 T1에서도 겹친 쌍은 1개뿐이었습니다.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Q. "화순 이양면·강진 병영면, 민형배 둘 다 444!"</p>
+      <p class="small">민형배 후보는 <b>2024년 총선 광양·곡성·구례 선거구</b> 후보로, 화순·강진 투표지에는
+        애초에 등장하지 않습니다. 서로 다른 선거구의 무관한 숫자가 같은 값인 것 역시 생일 역설입니다.
+        (그 선거를 직접 보려면 <code>--election-id 0020240410</code>로 2024 총선 데이터를 받아 돌리면 됩니다.)</p>
+    </div>
+    <p class="muted small">떠도는 "동일 득표" 주장 상당수는 서로 다른 선거/선거구의 무관한 숫자를 비교한 것입니다.
+      그래도 의심은 정당합니다 — 그래서 직접 확인할 수 있게 도구를 공개합니다.</p>
+  </div>
+</section>
+
+<section id="repro">
+  <div class="wrap">
+    <h2>Reproduce</h2>
+    <h3>직접 검증하기</h3>
+    <div class="note">
+      <p style="margin-top:0"><b>1) 공개 데이터로 재현</b></p>
+      <p class="small"><code>pip install -r requirements.txt</code><br>
+        <code>cd election_verify &amp;&amp; python run_all.py</code></p>
+      <p><b>2) 원본을 직접 받기</b></p>
+      <p class="small"><code>python nec_download.py --type all</code><br>
+        다른 선거도: <code>python nec_download.py --election-id 0020240410 --type 국회의원</code></p>
+    </div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:16px">
+      <a class="card" href="PUBLIC_REPORT.md"><b>📄 전체 리포트</b><div class="small muted">비유로 푼 상세 결과</div></a>
+      <a class="card" href="README.md"><b>📘 사용법</b><div class="small muted">설치·실행·검정 설명</div></a>
+      <a class="card" href="data/nec_2026_local.csv.gz"><b>🗂️ 데이터</b><div class="small muted">전국 35만 행 (gz 5MB)</div></a>
+      <a class="card" href="election_verify/"><b>🧪 검정 코드</b><div class="small muted">T1~T6 + 로더</div></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><b>데이터 출처</b> 중앙선거관리위원회 선거통계시스템
+      <a href="https://info.nec.go.kr">info.nec.go.kr</a> (공개 데이터) ·
+      <b>대상</b> 2026 제9회 전국동시지방선거(2026-06-03).</p>
+    <p>이 리포트는 부정선거를 증명하지도, 완전무결을 보증하지도 않습니다. 통계로 "이게 진짜 이상한
+      일이냐"를 따져, <b>누구나 재현·반박할 수 있게</b> 공개한 것입니다. 코드·데이터는 이 저장소에 포함됩니다.</p>
+    <p>🍴 <b>얼마든지 가져가서 fork·수정·재현해보세요.</b> 결과가 다르면 알려주세요 — 검증은 여러 사람이
+      각자 돌려본 결과가 모일 때 신뢰가 생깁니다. 코드는 MIT 라이선스, "내 말을 믿어라"가 아니라
+      <b>"직접 확인해봐라"</b> 가 이 프로젝트의 태도입니다.</p>
+  </div>
+</footer>
+</body>
+</html>
