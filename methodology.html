@@ -17,7 +17,7 @@
     --disp:"General Sans",sans-serif;--body:"DM Sans","Malgun Gothic",sans-serif;--mono:"JetBrains Mono",monospace;}
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.75}
-  .wrap{max-width:820px;margin:0 auto;padding:0 24px}
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px}
   a{color:var(--primary);text-decoration:none}a:hover{text-decoration:underline}
   h1,h2,h3{font-family:var(--disp);font-weight:700;letter-spacing:-.03em;color:var(--ink);margin:0}
   header{background:var(--surface);border-bottom:1px solid var(--border);padding:56px 0 40px}
@@ -178,20 +178,41 @@
 <section>
   <div class="wrap">
     <h2>그래서 8건은 많은가?</h2>
-    <p>per-pair는 드물어도, 비교한 쌍이 엄청 많습니다. "1동·2동처럼 같은 이름+연번 동" 쌍만 세도
-      <b>전국 7,244쌍</b>. 각 1/수천이라 합치면:</p>
+    <p>per-pair는 드물어도 비교한 쌍이 많습니다(전국 관내사전 <b>약 171만 쌍</b>). 그래서 "조작이 전혀
+      없다면 우연히 몇 건?"을 두 각도로 봅니다.</p>
+
+    <h3>① 진짜 닮은 이웃 — "형제(연번) 동"만</h3>
+    <p>"1동·2동처럼 같은 이름+연번" 형제 동은 유권자·동네가 거의 같아 <b>쌍둥이</b>로 보는 게 타당합니다.
+      두 동이 쌍둥이(=일치에 가장 유리)라고 가정해도 우연 동시일치가 몇 건인지 셉니다
+      (<code>sibling_pairs.py</code>):</p>
     <table>
-      <thead><tr><th>같은 이름+연번 동 쌍</th><th class="c">관측</th><th class="c">우연 기대</th></tr></thead>
+      <thead><tr><th>같은 이름+연번 동 쌍 (전국 약 6,990쌍)</th><th class="c">관측</th><th class="c">쌍둥이-가정 기대(상한)</th></tr></thead>
       <tbody>
-        <tr><td>상위2 동시 일치</td><td class="c">1건 (송도)</td><td class="c">약 3건</td></tr>
+        <tr><td>상위2 동시 일치 (1위 ≥ 100)</td><td class="c">1건 (송도)</td><td class="c">2.8건</td></tr>
+      </tbody>
+    </table>
+    <p><b>관측 1건 &lt; 기대 2.8건.</b> 붙어있는 형제 동 기준으로는 동시일치가 오히려 우연 기대보다
+      <b>적게</b> 나왔고, 송도1·2동의 일치도 이 범위 안입니다.</p>
+
+    <h3>② 전체 8건 — null에 따라 갈린다(= 약한 검정)</h3>
+    <p>전체 8건은 "우연 모델을 어떻게 짜느냐"에 따라 기대가 크게 달라집니다(매칭이 전부 일어난
+      시도지사·교육감·광역비례 기준, <code>census_significance.py</code>):</p>
+    <table>
+      <thead><tr><th>우연 모델 (부트스트랩)</th><th class="c">우연 기대</th><th class="c">관측</th></tr></thead>
+      <tbody>
+        <tr><td>교환식 — 모든 쌍을 닮은꼴로 취급(율 재사용 → <b>부풀림</b>)</td><td class="c">10.8</td><td class="c" rowspan="2"><b>8</b></td></tr>
+        <tr><td><b>모수식 — 각 동 자기 크기·득표율 보존(더 충실)</b></td><td class="c"><b>4.2</b></td></tr>
       </tbody>
     </table>
     <div class="card key">
-      <p style="margin:0"><b>관측 1건 &lt; 기대 3건.</b> 즉 "붙어있는 동" 기준으로 봐도 동시일치는
-        오히려 기대보다 적게 나왔습니다. 8건 전체(전국 171만 쌍)로 봐도 관측 8 ≈ 기대 10.8 — 초과 없음.</p>
+      <p style="margin:0"><b>충실한 모수식 기준 관측 8 &gt; 기대 4.2 (+1.9σ, p≈0.07).</b> 관대한 교환식(10.8)
+        기준으론 이내지만, <b>더 엄격한 null에선 오히려 초과</b>합니다. 즉 "8건은 깔끔히 우연 범위"라는 한 줄
+        결론은 과합니다 — 개수 검정은 null 선택에 흔들리는 <b>약한 검정</b>입니다.</p>
     </div>
-    <p class="small muted">"우연으로 설명된다"는 뜻이지 "조작이 없음을 증명"은 아닙니다. 통계는 "이 패턴에
-      우연을 넘는 신호가 없다"까지 말합니다. 모든 코드·데이터는 <a href="https://github.com/debtor114/election">저장소</a>에서 재현됩니다.</p>
+    <p class="small muted">진짜 안심 근거는 '개수'가 아니라 ① <b>복제(전 후보+총계까지 동일) 0건</b>,
+      ② 특정 후보로의 <b>방향성 쏠림 없음</b>, ③ <b>2018·2022·2026 세 해 모두 같은 패턴이고 매칭이 전국
+      승자가 아니라 지역을 따라감</b> — 이쪽입니다. 위 초과분도 대부분 전남의 극단적 동질성으로 설명됩니다.
+      모든 코드·데이터는 <a href="https://github.com/debtor114/election">저장소</a>에서 재현됩니다.</p>
   </div>
 </section>
 

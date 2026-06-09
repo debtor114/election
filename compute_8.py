@@ -68,7 +68,8 @@ def main():
         vals = f"{nm[0]}={v[0]} {nm[1]}={v[1]}"
         print(f"{n:<3}{emds:<30}{vals:<26}{f'{T1},{T2}':>14}{'1/' + format(round(1/P), ','):>12}")
     print("\n전부 1/수백~1/수천 (1/백만이 아님). 송도가 가장 드뭄(투표소 최대 + 두 값 다 큼).")
-    print("최종 판단: census_significance.py — 관측 8건 ≈ 우연 기대 ~10.8건 (초과 없음).")
+    print("최종 판단: census_significance.py — 충실 모수식 기대 ~4.2 vs 관측 8 (+1.9σ, p≈0.07 약한 초과);")
+    print("           관대한 교환식 기대 ~10.8 기준으론 이내. null에 흔들리는 약한 검정 — 복제·방향성으로 보강.")
 
 
 if __name__ == "__main__":

@@ -16,7 +16,7 @@
     --disp:"General Sans",sans-serif;--body:"DM Sans","Malgun Gothic",sans-serif;--mono:"JetBrains Mono",monospace;}
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.7}
-  .wrap{max-width:860px;margin:0 auto;padding:0 24px}
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px}
   a{color:var(--primary);text-decoration:none}a:hover{text-decoration:underline}
   h1,h2,h3{font-family:var(--disp);font-weight:700;letter-spacing:-.03em;margin:0}
   header{background:var(--surface);border-bottom:1px solid var(--border);padding:54px 0 38px}
@@ -144,13 +144,13 @@
     <div class="a win"><span class="tag">검증 — 당신이 옳았다, 결론 수정</span>
       <p>실제로 그랬습니다. 두 가지 null로 다시 돌렸습니다:</p>
       <table><thead><tr><th>방법</th><th class="c">기대 일치수</th></tr></thead><tbody>
-        <tr><td>교환식(득표율 풀 재추출) — 원래 쓰던 것</td><td class="c">6.83</td></tr>
-        <tr><td><b>모수식(각 동 자기 크기·득표율 보존) — 더 충실</b></td><td class="c"><b>3.88</b></td></tr>
+        <tr><td>교환식(득표율 풀 재추출) — 원래 쓰던 것</td><td class="c">10.8</td></tr>
+        <tr><td><b>모수식(각 동 자기 크기·득표율 보존) — 더 충실</b></td><td class="c"><b>4.2</b></td></tr>
         <tr><td><b>관측</b></td><td class="c"><b class="num">8</b></td></tr>
       </tbody></table>
       <div class="callout warn">
-        교환식은 같은 득표율을 여러 동에 재사용해 충돌을 부풀립니다(6.83). 충실한 모수식은 3.88.
-        <b>관측 8 &gt; 모수식 3.88 (약 2σ 위).</b> 즉 제가 자신있게 말한 <b>"8 ≤ 기대, 우연 범위"는
+        교환식은 같은 득표율을 여러 동에 재사용해 충돌을 부풀립니다(10.8). 충실한 모수식은 4.2.
+        <b>관측 8 &gt; 모수식 4.2 (+1.9σ, p≈0.07).</b> 즉 제가 자신있게 말한 <b>"8 ≤ 기대, 우연 범위"는
         더 엄격한 null에선 성립하지 않습니다.</b> 개수 검정은 null 선택에 흔들리는 <b>약한 검정</b>입니다.
       </div>
     </div>
@@ -185,7 +185,7 @@
 <section><div class="wrap">
   <h2>정직한 최종 결론 (수정본)</h2>
   <div class="callout warn" style="font-size:15px">
-    <p><b>"8건은 깔끔히 우연 범위"는 제 과언이었습니다.</b> 충실한 null로는 관측 8이 기대 3.88을 다소
+    <p><b>"8건은 깔끔히 우연 범위"는 제 과언이었습니다.</b> 충실한 null로는 관측 8이 기대 4.2를 다소
       초과합니다(특히 전남 집중). 개수 검정은 약하고 null에 흔들립니다.</p>
     <p style="margin-bottom:0"><b>그러나 부정의 적극 신호도 없습니다</b> — 복제 0건, 방향 조직적 쏠림 없음,
       전 사례 관내사전. 초과분은 전남의 극단적 동질성(이웃 동이 비슷하게 투표)으로 상당부분 설명 가능하나,
@@ -208,7 +208,7 @@
     <tbody>
       <tr><td>2018</td><td>민주 우세</td><td class="c">10</td><td class="c">6.14</td><td>민주 4 · <b>한국(보수) 2</b> · 교육감 4</td></tr>
       <tr><td>2022</td><td>국힘 우세</td><td class="c">6</td><td class="c">4.89</td><td><b>국힘 2 · 민주 2</b> · 교육감 2</td></tr>
-      <tr><td>2026</td><td>민주</td><td class="c">8</td><td class="c">3.88</td><td>민주 5(전남) · 국힘 1 · 교육감 2</td></tr>
+      <tr><td>2026</td><td>민주</td><td class="c">8</td><td class="c">4.2</td><td>민주 5(전남) · 국힘 1 · 교육감 2</td></tr>
     </tbody>
   </table>
   <div class="callout key">
