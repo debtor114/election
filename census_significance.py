@@ -28,9 +28,8 @@ def census_pairs(M, top_idx, minval):
 def main():
     rng = np.random.default_rng(0)
     obs_total = 0
-    sim_total = np.zeros(NSIM)
-    obs_incheon = 0
-    sim_incheon = np.zeros(NSIM)
+    sim_exch = np.zeros(NSIM)
+    sim_param = np.zeros(NSIM)
     for etype in TYPES:
         try:
             df = nd.load_type(etype)
@@ -46,34 +45,36 @@ def main():
             if len(u) < 2:
                 continue
             V = u[cc].fillna(0).to_numpy(dtype=int)
-            T = u[nd.TOTAL_COL].fillna(0).to_numpy(dtype=int)
+            T = u["투표수"].fillna(0).to_numpy(dtype=int)   # 투표수(=총표) 기준
             o = census_pairs(V, top_idx, MINVAL)
             obs_total += o
-            is_incheon = (etype == "시도지사" and nd.race_label(key) == "인천")
-            if is_incheon:
-                obs_incheon += o
-            # 부트스트랩 null
+            n = len(V)
+            # null 1: 교환식(득표율을 풀에서 재추출) — 같은 율 재사용으로 충돌 부풀 수 있음
             safe = T.copy(); safe[safe == 0] = 1
             sh = V / safe[:, None]
-            n = len(V)
+            # null 2: 모수식(각 동을 자기 총표·자기 득표율에서 다항추출) — 크기·분포 보존, 더 충실
+            res = (T - V.sum(1)).clip(min=0)
+            P = np.concatenate([V, res[:, None]], 1) / np.maximum(T, 1)[:, None]
             for k in range(NSIM):
                 idx = rng.integers(0, n, n)
-                sim = np.round(T[:, None] * sh[idx]).astype(int)
-                c = census_pairs(sim, top_idx, MINVAL)
-                sim_total[k] += c
-                if is_incheon:
-                    sim_incheon[k] += c
+                sim1 = np.round(T[:, None] * sh[idx]).astype(int)
+                sim_exch[k] += census_pairs(sim1, top_idx, MINVAL)
+                M = np.array([rng.multinomial(T[t], P[t]) for t in range(n)])
+                sim_param[k] += census_pairs(M[:, :V.shape[1]], top_idx, MINVAL)
 
     def report(name, obs, sims):
         mu, sd = sims.mean(), sims.std()
         z = (obs - mu) / sd if sd > 0 else float("nan")
         p = float((sims >= obs).mean())
-        print(f"{name}: 관측 {obs}건 | 우연 기대 {mu:.2f} ± {sd:.2f} | {z:+.1f}σ | p(이상 발생) = {p:.4f}")
+        print(f"  {name}: 관측 {obs} | 기대 {mu:.2f} ± {sd:.2f} | {z:+.1f}σ | p(관측이상)={p:.4f}")
 
     print(f"기준: 상위{TOPK}후보 동시 동일 & 1위>={MINVAL}  (부트스트랩 {NSIM}회)\n")
-    report("전국 전체", obs_total, sim_total)
-    report("인천 시도지사만", obs_incheon, sim_incheon)
-    report("인천 제외 전국", obs_total - obs_incheon, sim_total - sim_incheon)
+    print("[null 1 — 교환식(득표율 풀 재추출): 율 재사용으로 기대 부풀 수 있음]")
+    report("전국 전체", obs_total, sim_exch)
+    print("\n[null 2 — 모수식(각 동 자기 크기·득표율 보존): 더 충실]")
+    report("전국 전체", obs_total, sim_param)
+    print("\n※ 두 기대가 다르면 null 선택에 결과가 의존 = 개수 검정은 약함.")
+    print("  관측이 충실(모수식) 기대를 넘으면 '8≤기대' 결론은 흔들림 — 방향성/복제 검정으로 보강 필요.")
 
 
 if __name__ == "__main__":
