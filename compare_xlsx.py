@@ -58,9 +58,9 @@ def parse_sheet(f, sheet):
         if gubun == '' and isinstance(r[cand_start], str) and r[cand_start].strip():
             if sido and sido not in names:
                 names[sido] = [clean(r[c]) for c in cand]
-        if gubun == '관내사전투표':
+        if gubun in ('관내사전투표', '선거일투표'):
             recs.append((sido, str(r[gu_col]).strip(), str(r[emd_col]).strip(),
-                         num(r[tu_col]), [num(r[c]) for c in cand]))
+                         gubun, num(r[tu_col]), [num(r[c]) for c in cand]))
     return recs, names
 
 
@@ -69,7 +69,7 @@ def dbl(M, ti):
     return sum(c*(c-1)//2 for c in Counter(k for k in keys if k[0] >= MINVAL).values())
 
 
-def analyze(f, label):
+def analyze(f, label, target='관내사전투표'):
     rng = np.random.default_rng(0)
     obs = 0; exch = 0.0; param = 0.0; cases = []
     party_dir = Counter()
@@ -79,8 +79,9 @@ def analyze(f, label):
         except Exception as e:
             print(f"  {sheet}: 파싱 실패 {e}"); continue
         by_sido = defaultdict(list)
-        for sido, gu, emd, tu, vals in recs:
-            by_sido[sido].append((gu, emd, tu, vals))
+        for sido, gu, emd, gubun, tu, vals in recs:
+            if gubun == target:
+                by_sido[sido].append((gu, emd, tu, vals))
         for sido, rows in by_sido.items():
             if len(rows) < 2:
                 continue
@@ -114,15 +115,14 @@ def analyze(f, label):
 
 if __name__ == "__main__":
     files = sys.argv[1:] or [
-        'data/past_elections/중앙선거관리위원회_제7회 전국동시지방선거 개표결과_20180613.xlsx',
-        'data/past_elections/중앙선거관리위원회_제8회 전국동시지방선거 개표결과_20220601.xlsx',
+        '중앙선거관리위원회_제7회 전국동시지방선거 개표결과_20180613.xlsx',
+        '중앙선거관리위원회_제8회 전국동시지방선거 개표결과_20220601.xlsx',
     ]
-    print("동일득표(상위2 동시일치, 1위>=100, 관내사전) — 시도지사·교육감·광역비례\n")
+    print("동일득표(상위2 동시일치, 1위>=100) — 시도지사·교육감·광역비례\n")
     for f in files:
         label = '2018' if '20180613' in f else ('2022' if '20220601' in f else f)
-        o, e1, e2, cases, pd_ = analyze(f, label)
         print(f"=== {label} ===")
-        print(f"  관측 {o} | 교환식 기대 {e1:.2f} | 모수식 기대 {e2:.2f}")
-        print(f"  방향(1위 정당): {dict(pd_)}")
-        for c in cases: print(f"    · {c}")
+        for tgt in ('관내사전투표', '선거일투표'):
+            o, e1, e2, cases, pd_ = analyze(f, label, target=tgt)
+            print(f"  [{tgt}] 관측 {o} | 모수식 기대 {e2:.2f} | 방향 {dict(pd_)}")
         print()
