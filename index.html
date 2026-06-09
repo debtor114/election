@@ -153,10 +153,10 @@
     <span class="brand">개표 검증<span class="dot">.</span></span>
     <div class="navlinks">
       <a href="#verdict">결과</a>
+      <a href="#control">교차검증</a>
       <a href="#census">전수조사</a>
       <a href="methodology.html">계산법</a>
       <a href="verification_log.html">검증로그</a>
-      <a href="#qa">Q&amp;A</a>
       <a href="https://github.com/debtor114/election" class="cta">GitHub ↗</a>
     </div>
   </div>
@@ -250,6 +250,36 @@
   </div>
 </section>
 
+<section id="control">
+  <div class="wrap">
+    <p class="kicker">Strongest evidence</p>
+    <h2 class="sec">가장 강한 증거 — 승자가 바뀐 3개 선거 교차검증</h2>
+    <p class="sec-note">"두 읍면동의 상위 2후보 득표가 동시에 같은 쌍"을 과거 지방선거에도 똑같이 세어봤습니다.
+      전국 우세 정당은 <b>해마다 바뀌었지만</b>(민주→국힘→민주), 결과 패턴은 일정합니다.</p>
+    <div class="tbl-wrap" style="margin-top:16px">
+      <table>
+        <thead><tr><th>연도</th><th>전국 우세</th><th class="c">관측</th><th class="c">충실 null 기대</th><th class="c">배율</th><th>매칭 1위 정당</th></tr></thead>
+        <tbody>
+          <tr><td class="name">2018</td><td>민주 우세</td><td class="c">10</td><td class="c">6.14</td><td class="c">1.6×</td><td>민주 4 · <b>한국(보수) 2</b> · 교육감 4</td></tr>
+          <tr><td class="name">2022</td><td>국힘 우세</td><td class="c">6</td><td class="c">4.89</td><td class="c">1.2×</td><td><b>국힘 2 · 민주 2</b> · 교육감 2</td></tr>
+          <tr><td class="name">2026</td><td>민주</td><td class="c">8</td><td class="c">3.88</td><td class="c">2.1×</td><td>민주 5(전남) · 국힘 1 · 교육감 2</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout key">
+      <p><b>① 일정한 초과 = 모델 한계, 매년 부정 아님.</b> 세 해 모두 관측이 충실 null의 1.2~2배로
+        <i>비슷하게</i> 초과합니다. 승자가 매년 바뀌었는데 배율이 일정하다는 건 — "매년 누가 조작"이 아니라,
+        독립 null이 <b>닮은 이웃 동의 충돌을 항상 조금 과소예측</b>한다는 뜻입니다.</p>
+      <p style="margin-top:10px"><b>② 매칭은 전국 승자가 아니라 지역 우세를 따른다.</b> 2022는 국힘이 우세했으나
+        매칭은 국힘 2·민주 2였고, 2018은 민주가 우세했으나 보수(대구·경북) 매칭이 포함됩니다. 조작이라면
+        그해 승자로 쏠려야 하는데 그렇지 않습니다.</p>
+      <p style="margin-top:10px" class="small muted">→ 이 교차검증이 단일 연도의 σ보다 훨씬 결정적입니다. 데이터는
+        세 해 모두 우연과 일치합니다(공식 xlsx, <code>compare_xlsx.py</code>로 재현). 자세히 →
+        <a href="verification_log.html"><b>검증 로그</b></a></p>
+    </div>
+  </div>
+</section>
+
 <section id="tests">
   <div class="wrap">
     <p class="kicker">How it works</p>
@@ -294,24 +324,30 @@
 <section id="flags">
   <div class="wrap">
     <p class="kicker">About those flags</p>
-    <h2 class="sec">FLAG 3건 — 사실과 열린 해석</h2>
+    <h2 class="sec">FLAG 3건 — "여러 곳 동시에 보기"를 감안하면 인천만 남는다</h2>
+    <p class="sec-note"><b>σ</b>는 "우연 치고 얼마나 드문가"를 재는 자입니다(+3σ ≈ 우연이면 천 번에 한두 번).
+      그런데 한 곳이 아니라 <b>~1,245곳을 한꺼번에</b> 보면, 진짜론 멀쩡해도 우연히 '튀어 보이는' 게 몇 개는
+      나옵니다(<b>헛경보</b>). 1,245곳이면 +3σ짜리 헛경보가 <b>~1.7건</b> 기대돼요. 그래서 "여러 곳을 동시에 봤다"는
+      걸 감안해 기준을 더 엄격하게 높여야 합니다(이걸 <b>다중비교 보정</b>이라 합니다). 그 엄격한 선이 <b>≈ +3.95σ</b>입니다.</p>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>선거</th><th class="c">동일(상위2) 쌍</th><th class="c">기대치</th><th class="c">σ</th></tr></thead>
+        <thead><tr><th>선거</th><th class="c">σ</th><th class="c">1,245곳 중 우연히 이만큼 나올 빈도</th><th class="c">엄격 기준(+3.95σ) 적용 후</th></tr></thead>
         <tbody>
-          <tr><td class="name">전남 시도지사</td><td class="c">3</td><td class="c">0.4</td><td class="c">+3.9</td></tr>
-          <tr><td class="name">인천 시도지사</td><td class="c">1</td><td class="c">0.02</td><td class="c">+7.0</td></tr>
-          <tr><td class="name">충북 광역비례</td><td class="c">1</td><td class="c">0.09</td><td class="c">+3.0</td></tr>
+          <tr><td class="name">인천 시도지사</td><td class="c">+7.0</td><td class="c">~0.000003건</td><td class="c"><span class="chip flag">진짜 드묾(남음)</span></td></tr>
+          <tr><td class="name">전남 시도지사</td><td class="c">+3.9</td><td class="c">~0.06건</td><td class="c"><span class="chip weak">경계(기준 바로 아래)</span></td></tr>
+          <tr><td class="name">충북 광역비례</td><td class="c">+3.0</td><td class="c">~1.7건</td><td class="c"><span class="chip pass">헛경보 범위</span></td></tr>
         </tbody>
       </table>
     </div>
     <div class="callout">
-      <p><b>사실:</b> 이 세 선거에서 동일 득표 쌍 수가 단순 우연 모델의 기대치를 통계적으로 유의하게
-        초과했습니다(그래서 PASS가 아니라 FLAG). <b>열린 해석:</b> 이것이 다중비교에 따른 우연인지
-        (약 1,245개를 동시에 보면 +3σ가 몇 건 나오는 게 정상) 다른 원인인지는
-        <b>이 검정만으로 단정할 수 없습니다.</b> FLAG는 "여기를 더 보라"는 표시이지 결론이 아닙니다.
-        정상(PASS)을 "은폐"로, 이상치(FLAG)를 "스모킹건"으로 읽는 것 둘 다 데이터가 뒷받침하지 않는 비약입니다.</p>
+      <p><b>엄격한 기준을 적용하면 살아남는 건 인천 1건뿐입니다.</b> 충북(+3.0)은 1,245곳을 동시에 보면 우연히도
+        ~1.7건은 나오는 <b>헛경보 범위</b>이고, 전남(+3.9)은 기준선(+3.95σ) 바로 아래 경계입니다(우연일 확률 ~6%).
+        <b>그 인천(+7.0)조차</b> 바로 옆 신도시(송도1·2동)라 유권자·득표율이 거의 똑같아 상당부분 설명됩니다(아래 전수조사 참고).
+        FLAG는 "여기를 더 보라"는 표시이지 결론이 아닙니다 — 정상을 "은폐"로, 이상치를 "스모킹건"으로 읽는 것 둘 다 비약입니다.</p>
     </div>
+    <p class="small muted" style="margin-top:12px">※ 인천 σ는 우연 모델을 어떻게 잡느냐에 따라 <b>+6.3~+8.5σ</b>로 달라지고,
+      이 지표가 값이 띄엄띄엄(대부분 0, 가끔 1)이라 σ 자체가 불안정합니다. 더 정확한 척도는 <b>p값(우연일 확률, 동네당 ~1~2%)</b>이며,
+      어느 값이든 위 엄격한 기준선(+3.95σ)은 넘습니다. 그래도 σ 하나로 못 박지 않는 게 정직합니다.</p>
   </div>
 </section>
 
@@ -331,7 +367,7 @@
         <thead><tr><th class="c">#</th><th>선거</th><th>두 읍면동</th><th>동시 일치 값</th><th class="c">강도</th></tr></thead>
         <tbody>
           <tr><td class="c">1</td><td class="name">인천 시도지사</td><td>송도1동 · 송도2동</td>
-            <td>박찬대 <b>3030</b> · 유정복 <b>1440</b></td><td class="c"><span class="chip flag">+6.3σ</span></td></tr>
+            <td>박찬대 <b>3030</b> · 유정복 <b>1440</b></td><td class="c"><span class="chip flag">+6~8σ</span></td></tr>
           <tr><td class="c">2</td><td class="name">전남 시도지사</td><td>북하면 · 엄다면</td>
             <td>민형배 606 · 이정현 57</td><td class="c"><span class="chip weak">약</span></td></tr>
           <tr><td class="c">3</td><td class="name">전남 시도지사</td><td>삼일동 · 하의면</td>
@@ -350,23 +386,25 @@
       </table>
     </div>
 
-    <h3 class="sub" style="margin-top:40px">"8건이 우연인가" — 약한 검정 (null에 흔들림)</h3>
-    <p class="sec-note">한 회의론자의 지적으로 <b>제 초기 결론을 수정했습니다.</b> 부트스트랩 null을 어떻게
-      만드느냐에 따라 기대치가 달라집니다(매칭이 전부 일어난 시도지사·교육감·광역비례 기준):</p>
-    <div class="tbl-wrap" style="margin-top:16px;max-width:760px">
+    <h3 class="sub" style="margin-top:40px">"8건이 우연인가" — 약한 검정 ('우연이면 몇 건?' 계산법에 흔들림)</h3>
+    <p class="sec-note">8건이 많은지 보려면 "조작이 전혀 없다면 우연히 몇 건 나올까"(=우연 기대치)를 컴퓨터로
+      수만 번 모의실험해 비교합니다. 그런데 그 <b>모의실험을 어떻게 짜느냐</b>에 따라 기대치가 달라집니다
+      (매칭이 전부 일어난 시도지사·교육감·광역비례 기준):</p>
+    <div class="tbl-wrap" style="margin-top:16px;max-width:820px">
       <table>
-        <thead><tr><th>null 방법</th><th class="c">기대</th><th class="c">관측</th></tr></thead>
+        <thead><tr><th>모의실험 방식</th><th class="c">우연 기대</th><th class="c">관측</th></tr></thead>
         <tbody>
-          <tr><td class="name">교환식(득표율 풀 재추출) — 율 재사용으로 부풀림</td><td class="c">6.83</td><td class="c" rowspan="2"><b>8</b></td></tr>
-          <tr><td class="name">모수식(각 동 자기 크기·득표율 보존) — 더 충실</td><td class="c"><b>3.88</b></td></tr>
+          <tr><td class="name">동들의 득표율을 마구 섞어 다시 뽑음 — 같은 율이 재사용돼 우연 충돌을 좀 <b>부풀림</b></td><td class="c">6.83</td><td class="c" rowspan="2"><b>8</b></td></tr>
+          <tr><td class="name">각 동을 자기 실제 크기·득표율 그대로 두고 뽑음 — <b>현실에 더 가까움</b></td><td class="c"><b>3.88</b></td></tr>
         </tbody>
       </table>
     </div>
     <div class="callout" style="border-left-color:var(--warning)">
-      <p style="margin:0"><b>관측 8 &gt; 충실한 모수식 기대 3.88 (약 2σ 위).</b> 즉 "8건은 깔끔히 우연 범위"는
-        제 과언이었습니다 — 개수 검정은 null 선택에 흔들리는 <b>약한 검정</b>입니다. 초과분은 대부분
-        <b>전남</b>(민형배가 모든 면 압도 + 2위 극소수 → 동질성으로 매칭 쉬움)에 몰려 있어 지리적 동질성으로
-        설명 가능성이 높지만, <b>단정할 수 없습니다.</b> 전 과정·정정은 → <a href="verification_log.html"><b>검증 로그</b></a></p>
+      <p style="margin:0"><b>관측 8건 &gt; 현실에 가까운 우연 기대 3.88건 (조금 많음).</b> 즉 "8건은 깔끔히 우연
+        범위"는 제 과언이었습니다 — 이 개수 검정은 모의실험 짜는 방식에 흔들리는 <b>약한 검정</b>입니다.
+        많이 나온 부분은 대부분 <b>전남</b>(민형배가 모든 면에서 압도 + 2위가 극소수라 두 값이 겹치기 쉬움)에
+        몰려 있어 "비슷한 동네라서"로 설명될 여지가 크지만, <b>단정할 수는 없습니다.</b> 전 과정·정정은 →
+        <a href="verification_log.html"><b>검증 로그</b></a></p>
     </div>
 
     <h3 class="sub" style="margin-top:40px">개수가 약하니 — 더 강한 검정: 방향성 · 복제</h3>
@@ -378,25 +416,6 @@
         "동일득표=부정"은 미증명, "완전한 우연"도 단정 불가.</p>
     </div>
 
-    <h3 class="sub" style="margin-top:40px">과거 선거와 비교 (2018·2022·2026)</h3>
-    <p class="sec-note">이런 동일 득표 쌍은 2026에만 있는 것이 아닙니다 — 같은 기준으로 보면 2018에 10건, 2022에
-      6건이 같은 방식으로 나타납니다(공식 개표 xlsx). 전국 우세 정당은 해마다 달랐습니다(2018 민주·2022 국힘·2026 민주).</p>
-    <div class="tbl-wrap" style="margin-top:16px">
-      <table>
-        <thead><tr><th>연도</th><th>전국 우세</th><th class="c">관측</th><th class="c">충실 null</th><th>매칭 1위 정당</th></tr></thead>
-        <tbody>
-          <tr><td class="name">2018</td><td>민주 우세</td><td class="c">10</td><td class="c">6.14</td><td>민주 4 · <b>한국(보수) 2</b> · 교육감 4</td></tr>
-          <tr><td class="name">2022</td><td>국힘 우세</td><td class="c">6</td><td class="c">4.89</td><td><b>국힘 2 · 민주 2</b> · 교육감 2</td></tr>
-          <tr><td class="name">2026</td><td>민주</td><td class="c">8</td><td class="c">3.88</td><td>민주 5(전남) · 국힘 1 · 교육감 2</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="callout key">
-      <p style="margin:0">세 해 모두 관측이 충실 null의 1.2~2배로 비슷한 수준이 반복됩니다 — 2026만의 현상이
-        아닙니다. 또 <b>매칭의 1위 정당은 그해 전국 우세 정당과 일치하지 않습니다</b>(2022 국힘 우세→국힘 2·민주 2,
-        2018 민주 우세→보수 매칭 포함). 매칭은 해당 지역의 우세 정당을 따르는 것으로 관찰됩니다. 자세히 →
-        <a href="verification_log.html"><b>검증 로그</b></a></p>
-    </div>
 
     <h3 class="sub" style="margin-top:40px">더 나은 null로 한 번 더 — '유사-이웃 통제'</h3>
     <p class="sec-note">두 읍면동을 <b>인구학적 쌍둥이(진짜 득표율이 동일)로 가정</b>하는, '닮은 이웃' 가설에
@@ -422,6 +441,10 @@
     <p class="kicker">Forensic plots</p>
     <h2 class="sec">투표율 × 승자 득표율 — 전부 '둥근 구름'</h2>
     <p class="sec-note">왼쪽 산점도 / 오른쪽 밀도. 부정선거 신호인 오른쪽 위 '혜성 꼬리'는 어디서도 없습니다.</p>
+    <p class="small muted">눈으로만 보지 않게 정량화: <b>고투표율 구간(상위 50%)의 (투표율, 승자득표율) 상관계수</b>와
+      <b>lift</b>(상위 10% 투표율 동네의 승자득표율 − 전체 평균). 7종 모두 FLAG 임계(상관>0.45 &amp; lift>0.05) 미만:
+      시도지사 0.33/0.08 · 교육감 0.16/0.04 · 구시군의장 0.02/0.00 · 시도의원 0.13/0.04 · 광역비례 0.41/0.11 · 기초비례 0.31/0.08.
+      (혜성 꼬리라면 상관이 1에 가깝고 lift가 큼.)</p>
     <div class="gallery" style="margin-top:24px">
       <figure class="card"><img src="election_verify/out/T3_시도지사.png" alt="시도지사"><figcaption>시도지사</figcaption></figure>
       <figure class="card"><img src="election_verify/out/T3_교육감.png" alt="교육감"><figcaption>교육감</figcaption></figure>
@@ -454,7 +477,7 @@
         <p class="q">Q. "송도1·2동, 박찬대 3030 = 유정복 1440 동일!"</p>
         <p><b>사실입니다.</b> 박찬대·유정복 모두 <b>2026 인천시장</b> 후보이고, 송도1동·송도2동 관내사전에서
           <b>박찬대 3030, 유정복 1440이 동시에 동일</b>합니다(이기붕만 61/47로 다름). 이건 8건 중에서도
-          <b>가장 통계적으로 두드러진 사례(+6.3σ)</b> — 위 <a href="#census">전수조사</a> 1번입니다.</p>
+          <b>가장 통계적으로 두드러진 사례(+6~8σ, null에 따라)</b> — 위 <a href="#census">전수조사</a> 1번입니다.</p>
         <p>큰 값 두 개가 동시에 일치하는 건 우연으론 거의 안 나옵니다. 다만 송도1·2동은 인접 신도시라
           유권자·득표율이 거의 같아 단순 null이 과대평가했을 여지가 있어, <b>"추가 확인 필요"</b> 상태입니다.</p>
       </div>

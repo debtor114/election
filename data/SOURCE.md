@@ -23,9 +23,17 @@ data/
 │   └── CHECKSUMS.sha256       ← 원본 '비압축 내용'의 SHA-256
 ├── processed/
 │   └── nec_2026_local.csv.gz  ← 가공본 (long/tidy, 분석·검정용)
+├── past_elections/            ← 대조군: 2018·2022 지방선거 (출처 다름, 아래 참고)
+│   ├── ...제7회...20180613.xlsx · ...제8회...20220601.xlsx
+│   └── CHECKSUMS.sha256 · SOURCE.txt
 ├── shortage_list.example.csv  ← T5·T6용 부족 투표소 목록 양식
 └── SOURCE.md (이 파일)
 ```
+
+> **2018·2022 출처(중요):** 이 두 해는 info.nec.go.kr 선거통계시스템(현재 선거만 서빙)에 **없습니다.**
+> **공공데이터포털 data.go.kr**의 "중앙선거관리위원회 제7·8회 전국동시지방선거 개표결과" 공식 xlsx에서
+> 받았습니다(`data/past_elections/`). 2026(위 raw/processed)은 info.nec.go.kr, 2018·2022는 data.go.kr — 출처가 다릅니다.
+
 - **raw = 원본**: `nec_download.py`가 선관위에서 받은 그대로. 숫자 미가공.
 - **processed = 가공본**: `make_dataset.py`로 *형태만* long으로 바꾼 것(숫자 불변).
 - raw·gz는 용량 때문에 압축했을 뿐이며, 체크섬은 *비압축 내용* 기준입니다(압축 타임스탬프 영향 배제).
