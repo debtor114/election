@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>왜 1/3,900인가 — 동일득표 확률 계산법</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<style>
+  :root{--primary:#6366F1;--bg:#FAFAFA;--surface:#FFFFFF;--ink:#0A0A0A;--ink2:#6B6B6B;
+    --neutral:#9C9C9C;--border:#E8E8EC;--warning:#F59E0B;--success:#10B981;
+    --disp:"General Sans",sans-serif;--body:"DM Sans","Malgun Gothic",sans-serif;--mono:"JetBrains Mono",monospace;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.75}
+  .wrap{max-width:820px;margin:0 auto;padding:0 24px}
+  a{color:var(--primary);text-decoration:none}a:hover{text-decoration:underline}
+  h1,h2,h3{font-family:var(--disp);font-weight:700;letter-spacing:-.03em;color:var(--ink);margin:0}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:56px 0 40px}
+  .over{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--neutral);font-weight:500;margin:0 0 14px}
+  h1{font-size:clamp(28px,5vw,42px);line-height:1.12;margin-bottom:16px}
+  .lede{font-size:18px;color:var(--ink2);max-width:62ch}
+  .back{display:inline-block;margin-top:18px;font-size:14px;font-weight:500}
+  section{padding:40px 0;border-bottom:1px solid var(--border)}
+  h2{font-size:26px;margin-bottom:14px}
+  h3{font-size:19px;margin:26px 0 8px}
+  p{color:#23252b;margin:0 0 14px}
+  .muted{color:var(--ink2)}.small{font-size:14px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px 24px;margin:18px 0}
+  .bad{border-left:3px solid var(--warning)}
+  .good{border-left:3px solid var(--success)}
+  .key{border-left:3px solid var(--primary)}
+  code{font-family:var(--mono);font-size:13.5px;background:#fff;border:1px solid var(--border);border-radius:4px;padding:1px 6px}
+  table{width:100%;border-collapse:collapse;font-size:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:16px 0}
+  th,td{padding:11px 13px;text-align:left;border-bottom:1px solid var(--border)}
+  th{background:var(--bg);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--neutral);font-weight:500}
+  tr:last-child td{border-bottom:none}.c{text-align:center}
+  .big{font-family:var(--disp);font-weight:700;font-size:22px;color:var(--primary)}
+  .katex-display{margin:14px 0;overflow-x:auto;overflow-y:hidden}
+  .step{font-family:var(--disp);font-weight:600;font-size:14px;color:var(--primary);letter-spacing:.02em;margin-top:8px}
+  footer{padding:40px 0 70px;color:var(--ink2);font-size:14px}
+  b{color:var(--ink)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <p class="over">동일득표 확률 — 방법론</p>
+    <h1>"두 동이 같은 표"가 왜 1/수백만이 아니라 1/3,900인가</h1>
+    <p class="lede">송도1·2동에서 박찬대 3,030 · 유정복 1,440이 동시에 같았습니다. 직관으론 천문학적으로
+      드물 것 같은데, 실제 확률은 약 1/3,900입니다. 왜 그런지 수식으로 처음부터 보입니다.</p>
+    <a class="back" href="index.html">← 대시보드로</a>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>흔한 오해: "가짓수가 10,000개니까 1/10,000"</h2>
+    <p>투표인수 10,000명인 동에서 한 후보 득표는 0표부터 10,000표까지 "가능"합니다. 그래서 두 동이
+      같은 표일 확률을 $1/10{,}000$ 정도로 생각하기 쉽습니다.</p>
+    <div class="card bad">
+      <p style="margin:0"><b>이 계산은 득표수가 0~10,000에 <u>고르게(균등분포)</u> 퍼질 때만 맞습니다.</b>
+      실제 득표수는 그렇게 안 퍼집니다 — 평균 근처에 아주 좁게 뭉칩니다.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>정답: 두 번 뽑아 같을 확률 = 확률제곱합 (충돌확률)</h2>
+    <p>두 동이 한 후보에서 정확히 같은 표일 확률은 각 값 확률의 제곱을 모두 더한 값입니다:</p>
+    $$P(\text{두 동이 같음}) \;=\; \sum_{k} P(k)^2$$
+    <p>분포가 <b>균등</b>하면(가짓수 $N$) $\sum (1/N)^2 = 1/N$ — 이게 흔한 오해의 값입니다. 하지만
+      분포가 <b>한 곳에 뭉쳐</b> 있으면, 봉우리 값들이 큰 확률을 가져서 충돌확률이 $1/N$보다 훨씬 큽니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>득표수는 얼마나 뭉치나 — 표준편차 σ</h2>
+    <p>득표수 $X$는 이항분포 $X \sim \text{Binomial}(T,\,p)$ ($T$=투표인수, $p$=득표율)를 따릅니다.
+      퍼짐의 척도인 표준편차는</p>
+    $$\sigma = \sqrt{T\,p\,(1-p)}$$
+    <p>투표인수 $T=10{,}000$, 득표율 $p=0.3$이면 $\sigma=\sqrt{10000\cdot0.3\cdot0.7}\approx 46$.
+      즉 득표수는 사실상 <b>평균 ± 약 140표(3σ)</b> 안에서만 나오고, 0표나 10,000표는 확률이 사실상 0입니다.</p>
+    <div class="card good">
+      <p style="margin:0">그래서 "유효 가짓수"는 10,000이 아니라 $1/\sum P(k)^2 \approx 2\sigma\sqrt{\pi}\approx 160$.
+        한 후보 일치확률은 $1/10{,}000$이 아니라 약 <b>1/160</b>입니다.</p>
+    </div>
+    <h3>키(身長) 비유</h3>
+    <p>"키는 150~200cm니 두 사람이 같은 cm일 확률은 1/50"은 틀립니다. 키는 174±6cm에 뭉쳐서, 두 사람이
+      정확히 같은 cm일 확률은 약 <b>1/21</b>입니다. 득표수도 똑같이 평균에 뭉쳐 있어 충돌이 흔합니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>두 후보 동시 일치 — 닫힌 공식</h2>
+    <p>두 후보 A·B가 <i>동시에</i> 같을 확률. 이변량 정규 근사로, 차이벡터의 공분산 행렬식이
+      $\det = p_A p_B p_O$ ($p_O=1-p_A-p_B$=기타+무효)이므로:</p>
+    $$\boxed{\;P(\text{A·B 둘 다 일치}) \;\approx\; \frac{1}{2\pi\,(T_1+T_2)\,\sqrt{p_A\,p_B\,p_O}}\;}$$
+    <p class="small muted">두 후보는 음의 상관(합 제약)이라 단순 곱 $\frac{1}{160}\times\frac{1}{160}$보다 흔합니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>송도1·2동에 직접 대입</h2>
+    <table>
+      <thead><tr><th></th><th class="c">투표인수 T</th><th class="c">박찬대</th><th class="c">유정복</th><th class="c">기타+무효</th></tr></thead>
+      <tbody>
+        <tr><td><b>송도1동</b></td><td class="c">4,546</td><td class="c">3,030</td><td class="c">1,440</td><td class="c">76</td></tr>
+        <tr><td><b>송도2동</b></td><td class="c">4,539</td><td class="c">3,030</td><td class="c">1,440</td><td class="c">69</td></tr>
+      </tbody>
+    </table>
+    <p class="step">STEP 1 — 득표율 (두 동 합산)</p>
+    $$p_A=\tfrac{6060}{9085}=0.667,\quad p_B=\tfrac{2880}{9085}=0.317,\quad p_O=0.016$$
+    <p class="step">STEP 2 — 한 후보의 퍼짐</p>
+    $$\sigma_A=\sqrt{4546\cdot0.667\cdot0.333}\approx 31.8 \;\Rightarrow\; \text{박찬대는 } 3030\pm32 \text{ 안에서만 나옴}$$
+    <p class="step">STEP 3 — 한 후보 일치확률</p>
+    $$P(\text{박찬대 일치})\approx\frac{1}{\sigma_A\sqrt2\cdot\sqrt{2\pi}}=\frac{1}{45\times2.51}\approx\frac{1}{113}$$
+    <p class="step">STEP 4 — 두 후보 동시 일치 (공식 대입)</p>
+    $$P\approx\frac{1}{2\pi\cdot 9085\cdot\sqrt{0.667\cdot0.317\cdot0.016}}=\frac{1}{2\pi\cdot9085\cdot0.0581}\approx\frac{1}{3{,}316}$$
+    <div class="card key">
+      <p style="margin:0">정확한 충돌합 $\sum_{a,b}P_1(a,b)P_2(a,b)$ 으로는 <b>약 1/3,900</b>. 공식·정확·시뮬레이션이
+        모두 같은 자릿수입니다. <span class="big">≈ 1/3,900</span></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>"3,030±32"는 사후결론 아닌가?</h2>
+    <p>아닙니다 — 핵심을 비껴갑니다. <b>일치확률 $\sum_k P(k)^2$ 는 분포를 좌우로 평행이동해도 변하지
+      않습니다.</b> 즉 박찬대 평균이 3,030이든 2,800이든 일치확률은 똑같습니다. 답을 정하는 건 분포의
+      <b>중심(평균)이 아니라 폭(σ)</b> 이고, σ는 <b>투표인수 T와 대략의 지지율</b>에서 나옵니다 — 관측한
+      3,030에서 나오는 게 아닙니다.</p>
+    <p>실제로 득표율을 송도 자신이 아니라 <b>인천 전체</b>에서 가져와 계산해도 결과는 같습니다:</p>
+    <table>
+      <thead><tr><th>득표율 출처</th><th class="c">P(둘 다 일치)</th></tr></thead>
+      <tbody>
+        <tr><td>송도 두 동 자신</td><td class="c">1/3,316</td></tr>
+        <tr><td>인천 전체 평균(송도 미사용)</td><td class="c">1/3,595</td></tr>
+      </tbody>
+    </table>
+    <p class="small muted">송도 데이터를 전혀 안 써도 같은 자릿수 → 사후데이터 artifact가 아님. 또한 충돌합은
+      특정 값 3,030에 조건 건 게 아니라 모든 가능한 값에 대해 더한 것이라 "관측값에 맞춘" 것도 아닙니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>8건 전부 (같은 공식)</h2>
+    <table>
+      <thead><tr><th>#</th><th>두 동</th><th class="c">T₁,T₂</th><th>동시 일치 값</th><th class="c">per-pair 확률</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>인천 송도1·2동</td><td class="c">4546, 4539</td><td>박찬대 3030 · 유정복 1440</td><td class="c"><b>1/3,316</b></td></tr>
+        <tr><td>2</td><td>전남 북하·엄다면</td><td class="c">775, 754</td><td>민형배 606 · 이정현 57</td><td class="c">1/851</td></tr>
+        <tr><td>3</td><td>전남 삼일·하의</td><td class="c">587, 642</td><td>민형배 506 · 이정현 42</td><td class="c">1/603</td></tr>
+        <tr><td>4</td><td>전남 이양·병영</td><td class="c">578, 654</td><td>민형배 444 · 이정현 46</td><td class="c">1/812</td></tr>
+        <tr><td>5</td><td>전남 노동·팔금</td><td class="c">476, 486</td><td>민형배 356 · 이정현 42</td><td class="c">1/638</td></tr>
+        <tr><td>6</td><td>경남 중앙·병곡</td><td class="c">545, 563</td><td>국힘 280 · 민주 226</td><td class="c">1/930</td></tr>
+        <tr><td>7</td><td>경북 월성·지례</td><td class="c">435, 387</td><td>임종식 153 · 김상동 110</td><td class="c">1/978</td></tr>
+        <tr><td>8</td><td>경북 송라·도개</td><td class="c">440, 310</td><td>임종식 140 · 김상동 119</td><td class="c">1/902</td></tr>
+      </tbody>
+    </table>
+    <p>전부 <b>1/수백 ~ 1/수천</b>입니다(1/백만이 아님). 송도가 가장 드문 건(1/3,316) 투표소가 제일 크고
+      두 값이 다 커서입니다. 작은 면 단위(2위가 42~57표)는 더 흔합니다.</p>
+    <p class="small muted">※ 공식은 두 동 크기가 같다는 근사. 크기 차가 크면 정확값은 달라지지만 자릿수는
+      비슷하고, 최종 판단은 per-pair가 아니라 아래 '기대 vs 관측'으로 합니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>그래서 8건은 많은가?</h2>
+    <p>per-pair는 드물어도, 비교한 쌍이 엄청 많습니다. "1동·2동처럼 같은 이름+연번 동" 쌍만 세도
+      <b>전국 7,244쌍</b>. 각 1/수천이라 합치면:</p>
+    <table>
+      <thead><tr><th>같은 이름+연번 동 쌍</th><th class="c">관측</th><th class="c">우연 기대</th></tr></thead>
+      <tbody>
+        <tr><td>상위2 동시 일치</td><td class="c">1건 (송도)</td><td class="c">약 3건</td></tr>
+      </tbody>
+    </table>
+    <div class="card key">
+      <p style="margin:0"><b>관측 1건 &lt; 기대 3건.</b> 즉 "붙어있는 동" 기준으로 봐도 동시일치는
+        오히려 기대보다 적게 나왔습니다. 8건 전체(전국 171만 쌍)로 봐도 관측 8 ≈ 기대 10.8 — 초과 없음.</p>
+    </div>
+    <p class="small muted">"우연으로 설명된다"는 뜻이지 "조작이 없음을 증명"은 아닙니다. 통계는 "이 패턴에
+      우연을 넘는 신호가 없다"까지 말합니다. 모든 코드·데이터는 <a href="https://github.com/debtor114/election">저장소</a>에서 재현됩니다.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>방법: 다항분포 충돌확률 $\sum_{a,b}P_1(a,b)P_2(a,b)$, 가우시안 근사
+      $\frac{1}{2\pi(T_1+T_2)\sqrt{p_Ap_Bp_O}}$. 코드: <code>compute_8.py</code> · <code>neighbor_null.py</code> ·
+      <code>census_significance.py</code>. <a href="index.html">← 대시보드</a></p>
+  </div>
+</footer>
+</body>
+</html>
